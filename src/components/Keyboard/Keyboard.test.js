@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Keyboard from "./Keyboard";
+import { shallow } from "enzyme";
 
 describe("Keyboard", () => {
   it("should render without errors", () => {
@@ -9,13 +10,8 @@ describe("Keyboard", () => {
     ReactDOM.render(<Keyboard />, container);
   });
 
-  it("should find all keys slots", () => {
-    const layout = [
-      ["/", "*", "-", "+"],
-      ["7", "8", "9", "."],
-      ["4", "5", "6", ","],
-      ["1", "2", "3", "ENTER"],
-      ["0"]
-    ];
+  it("should find the key slot", () => {
+    const wrapper = shallow(<Keyboard />);
+    expect(wrapper.find('[data-qa="key-a"]').text()).toEqual("A");
   });
 });
