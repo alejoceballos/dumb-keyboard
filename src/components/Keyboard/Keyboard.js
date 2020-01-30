@@ -1,8 +1,15 @@
 import React from "react";
+import { map } from 'lodash';
+import { lowerCase } from "voca";
 
-const Keyboard = () => (
+const Keyboard = ({ layout }) => (
   <div>
-    <button data-qa="key-a">A</button>
+    {map(layout, key => {
+      const uniqueKey = `key-${lowerCase(key)}`;
+      return (
+        <button key={uniqueKey} data-qa={uniqueKey}>{key}</button>
+      );
+    })}
   </div>
 );
 

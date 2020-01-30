@@ -16,6 +16,8 @@ To follow this dream, I decided to start from scratch. Like I've never implement
 Let's try to make dreams reality! 
 
 ## Creating the application
+
+From [Creating a New React App](https://reactjs.org/docs/create-a-new-react-app.html "Creating a New React App"):
 ```
 npx create-react-app dumb-keyboard
 ```
@@ -56,6 +58,7 @@ export default Keyboard;
 ```
 And change the previous test.
 ```javascript
+// file: src/components/Keyboard/Keyboard.test.js
 .
 .
 .
@@ -73,7 +76,6 @@ A keyboard needs a layout to hold the keys by their type. Let's start humble. Th
 ```
 [A]
 ```
-
 To ease my work, I'll work with `enzyme` (https://airbnb.io/enzyme/). From the installation guide, I'll install the 
 version to be used with React 16 (or above?).
 
@@ -94,9 +96,7 @@ import Adapter from 'enzyme-adapter-react-16';
 
 configure({ adapter: new Adapter() });
 ```
-
 Now let's add some test cases using enzyme capabilities.
-
 ```javascript 1.8
 // file: src/components/Keyboard/Keyboard.test.js
 
@@ -109,15 +109,13 @@ describe("Keyboard", () => {
   .
   .
   .
-  it("should find the key slot", () => {
+  it("should find a simple key", () => {
     const wrapper = shallow(<Keyboard />);
     expect(wrapper.find('[data-qa="key-a"]').text()).toEqual("A");
   });
 });
 ```
-
 As expected, it will fail. Let's fix it.
-
 ```javascript 1.8
 // file: src/components/Keyboard/Keyboard.js
 
@@ -131,7 +129,94 @@ const Keyboard = () => (
 
 export default Keyboard;
 ```
-
 That's simple and it really ain't a Keyboard, actually. Let's make it more dynamic so it can accept different keys.
+
+Let's add a set of different keys to the keyboard. 
+```javascript 1.8
+// file: src/components/Keyboard/Keyboard.test.js
+.
+.
+.
+it("should accept a dynamic set of keys", () => {
+  const keyboardLayout = ['A', 'B', 'C'];
+  const wrapper = shallow(<Keyboard layout={keyboardLayout} />);
+    
+  expect(wrapper.find('[data-qa="key-a"]').text()).toEqual("A");
+  expect(wrapper.find('[data-qa="key-b"]').text()).toEqual("B");
+  expect(wrapper.find('[data-qa="key-c"]').text()).toEqual("C");
+});
+.
+.
+.
+```
+It will obviously fail on the the second expectation. There is no layout property in our keyboard and "A" button is 
+still hardcoded.
+
+I'll change the code so it passes the test, but before that, I'll install a nice library called 
+[lodash](https://lodash.com/ "lodash") ("A modern JavaScript utility library delivering modularity, performance & 
+extras"). It adds some null/undefined automatic checking, a lot of collections utility functions, and if properly used, 
+allows using Javascript in a more functional way.
+```
+yarn add lodash
+```
+I'll also need to use string functions, and for similar reason as before, I'll install a small library for string 
+manipulation that I'm very fond of, [voca](https://vocajs.com/ "voca"). According to the site:
+> The Voca library offers helpful functions to make string manipulations comfortable: change case, trim, pad, slugify, 
+> latinise, sprintf'y, truncate, escape and much more. The modular design allows to load the entire library, or 
+> individual functions to minimize the application builds. The library is fully tested, well documented and long-term 
+> supported. 
+```
+yarn add voca
+```
+And now, the code!
+```javascript 1.8
+// file: src/components/Keyboard/Keyboard.js
+
+import React from "react";
+import { map } from 'lodash';
+import { lowerCase } from "voca";
+
+const Keyboard = ({ layout }) => (
+  <div>
+    {map(layout, key => {
+      const uniqueKey = `key-${lowerCase(key)}`;
+      return (
+        <button key={uniqueKey} data-qa={uniqueKey}>{key}</button>
+      );
+    })}
+  </div>
+);
+
+export default Keyboard;
+```
+Our new test passed! But the previous one failed. Of course, if no layout is passed to our component, it will never 
+render a key. Let me pass a simple layout with only "A" key to make it pass again.
+```javascript 1.8
+// file: src/components/Keyboard/Keyboard.test.js
+  .
+  .
+  .
+  it("should find a simple key", () => {
+    const keyboardLayout = ['A'];
+    const wrapper = shallow(<Keyboard layout={keyboardLayout} />);
+
+    expect(wrapper.find('[data-qa="key-a"]').text()).toEqual("A");
+  });
+  .
+  .
+  .
+```
+Now it is all okay! Let's check how is our Keyboard being displayed! But I do not want to be able to check it in a 
+running application, it is a simple component that currently does nothing and must not be integrated. Storybooks to the 
+rescue!
+
+## Storybook for React
+
+Storybook is the best way to visually check if your components are being rendered as you want. It runs a separate server
+locally that allows accessing all your components in a single, organized page!
+
+Quoting the [Storybook for React site](https://storybook.js.org/docs/basics/introduction/ "Storybook for React"):
+> Storybook is a user interface development environment and playground for UI components. The tool enables developers to 
+> create components independently and showcase components interactively in an isolated development environment. 
 
 TBD
