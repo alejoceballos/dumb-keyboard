@@ -219,4 +219,32 @@ Quoting the [Storybook for React site](https://storybook.js.org/docs/basics/intr
 > Storybook is a user interface development environment and playground for UI components. The tool enables developers to 
 > create components independently and showcase components interactively in an isolated development environment. 
 
-TBD
+I'll use the following command since I created my application with `create-react-app`.
+```
+npx -p @storybook/cli sb init --type react_scripts
+```
+According to the documentation:
+> This command adds a set of boilerplate files for Storybook in your project
+
+A set of development dependencies and scripts will be added to your `package.json` file, also a default configuration
+will be created in `.storybook/main.js` and a basic example in `src/stories`.
+
+You can check the default Storybook site and examples with the command below.
+``` 
+yarn storybook
+``` 
+Now we can create a storybook for our component and check how it will be displayed in our application. Create a new 
+file named `Keyboard.stories.js` named `src/stories`.
+```javascript 1.8
+import React from 'react';
+import Keyboard from "../components/Keyboard/Keyboard";
+
+export default {
+  title: 'Keyboard',
+  component: Keyboard,
+};
+
+export const Basic = () => <Keyboard layout={['A', 'B', 'C']} />;
+``` 
+It will create a story in the storybook named `Basic` under the `Keyboard` left menu. May not seem a big deal, but now 
+we can decorate our keys with CSS and see how they will look like! 
