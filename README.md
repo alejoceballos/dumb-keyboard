@@ -233,7 +233,9 @@ You can check the default Storybook site and examples with the command below.
 ``` 
 yarn storybook
 ``` 
-Now we can create a storybook for our component and check how it will be displayed in our application. Create a new 
+The default STory Book can be seen by typing <http://localhost:9009> on your browser.
+
+Now we can create a story for our component and check how it will be displayed in our application. Create a new 
 file named `Keyboard.stories.js` named `src/stories`.
 ```javascript 1.8
 import React from 'react';
@@ -248,3 +250,78 @@ export const Basic = () => <Keyboard layout={['A', 'B', 'C']} />;
 ``` 
 It will create a story in the storybook named `Basic` under the `Keyboard` left menu. May not seem a big deal, but now 
 we can decorate our keys with CSS and see how they will look like! 
+
+Checking the Story Book, the one we have just created must be something similar to this:
+
+![First Keyboard Look](README.files/first-storybook-keyboard.png "First Keyboard Look")
+
+## Styled Components
+
+To help me style my keys (and everything else) I'll use a component based styling framework called 
+[Styled Components](https://styled-components.com/ "Styled Components"). I've been using it in my current job (February 4, 
+2020) and have been enjoying it. There are a set of [motivations](https://styled-components.com/docs/basics#motivation 
+"motivations") in the website that I mostly agree with.
+
+So, let's install it! 
+
+``` 
+yarn add styled-components
+``` 
+
+But how should the keyboard look like? I have what I consider a "fancy" laptop keyboard (too fancy in my opinion) that I
+could mimic. Something like this:
+
+![Fancy Keyboard](README.files/fancy-keyboard.png "Fancy Keyboard")
+
+Particularly, I'll focus on the background, text and borders. Using the browser's developer tools, I will get something 
+like this:
+
+![Changing Key Style in the Browser](README.files/changing-key-style-on-browser.png "Changing Key Style in the Browser")
+
+Not the best CSS, I know, but I'm just trying to see how it would look like. We can refactor it later.
+
+Updating our keyboard using styled components would like just like that:
+```javascript 1.8
+// file: src/components/Keyboard/Keyboard.js
+
+import React from "react";
+import { map } from 'lodash';
+import { lowerCase } from "voca";
+import styled from "styled-components/macro";
+
+const Key = styled.button`
+    background-color: black;
+    border-block-style: solid;
+    border-color: red;
+    border-radius: 3px;
+    border-width: 3px;
+    color: red;
+    font-size: larger;
+    height: 32px;
+    width: 32px;
+`;
+
+const Keyboard = ({ layout }) => (
+  <div>
+    {map(layout, key => {
+      const uniqueKey = `key-${lowerCase(key)}`;
+      return (
+        <Key key={uniqueKey} data-qa={uniqueKey}>{key}</Key>
+      );
+    })}
+  </div>
+);
+
+export default Keyboard;
+```
+Note three important things here:
+1. Instead of `styled-components/macro` I could have imported just `styled-components`, but I wouldn't get more 
+identifiable CSS class names prefixed by `Keyboard__Key` like `Keyboard__Key-sc-3kb479-0 jZPcQE`. They would be named 
+only with something like `sc-3kb479-0 jZPcQE` making more difficult to understand which styled component is styling
+that element;
+2. The CSS is still there, after the desired element name, under template strings. It allows passing properties and 
+applying conditionals using plain (ES6) Javascript code;
+3. Instead of using React's default button component, now a new one has been created and may be used instead. I can do 
+the same to my own components and also apply some sort of inheritance on them;
+
+TBD
