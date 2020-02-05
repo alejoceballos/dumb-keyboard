@@ -21,3 +21,7 @@
     * Select `Marketplace` tab
     * Search for [Styled Components & Styled JSX](https://plugins.jetbrains.com/plugin/9997-styled-components--styled-jsx "Styled Components & Styled JSX")
     * Press install on the corresponding item
+    
+### ESLint Autofix Execution using File Watchers
+
+**To Be Continued**

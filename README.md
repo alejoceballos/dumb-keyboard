@@ -216,10 +216,10 @@ Now it is all okay! Let's check how is our Keyboard being displayed! But I do no
 running application, it is a simple component that currently does nothing and must not be integrated. Storybooks to the 
 rescue!
 
-## Storybook for React
+## Visualizing the Component in Real Time
 
-Storybook is the best way to visually check if your components are being rendered as you want. It runs a separate server
-locally that allows accessing all your components in a single, organized page!
+I really like Storybook to visually check if my components are being rendered as I want. It runs a separate server
+locally that allows accessing all my components in a single, organized page!
 
 Quoting the [Storybook for React site](https://storybook.js.org/docs/basics/introduction/ "Storybook for React"):
 > Storybook is a user interface development environment and playground for UI components. The tool enables developers to 
@@ -261,23 +261,22 @@ Checking the Story Book, the one we have just created must be something similar 
 
 ![First Keyboard Look](README.files/first-storybook-keyboard.png "First Keyboard Look")
 
-## Styled Components
+## Styling The Keyboard
 
 To help me style my keys (and everything else) I'll use a component based styling framework called 
-[Styled Components](https://styled-components.com/ "Styled Components"). I've been using it in my current job (February 4, 
-2020) and have been enjoying it. There are a set of [motivations](https://styled-components.com/docs/basics#motivation 
-"motivations") in the website that I mostly agree with.
+[Styled Components](https://styled-components.com/ "Styled Components"). I've been currently using it and although there 
+are plenty other options I have been enjoying this one. There are a set of 
+[motivations](https://styled-components.com/docs/basics#motivation "motivations") in the website that I mostly agree 
+with.
 
 **NOTE:** For those using IntelliJ IDEA or any other tool from JetBrains that allows working with React, check 
 [IntelliJ IDEA Tips](README.files/IntelliJ-IDEA-tips.md#Styled-Components-Plugin "IntelliJ IDEA Tips") for a cool plugin 
 that adds support to Styled Components.
 
 So, let's install it! 
-
 ``` 
 yarn add styled-components
 ``` 
-
 But how should the keyboard look like? I have what I consider a "fancy" laptop keyboard (too fancy in my opinion) that I
 could mimic. Something like this:
 
@@ -335,5 +334,96 @@ that element;
 applying conditionals using plain (ES6) Javascript code;
 3. Instead of using React's default button component, now a new one has been created and may be used instead. I can do 
 the same to my own components and also apply some sort of inheritance on them;
+
+## Responding to Events
+
+This is a keyboard, so I need that each key tells someone in the outer world that it was pressed. I don't want the key 
+to directly change any input, label, header or whatever element that is supposed to be filled with letters on any page 
+that wraps the keyboard. Keeping on with the abstraction, this virtual keyboard is like a real one. In the real world, 
+most of the keyboards just send signals to the computer that interprets it and transforms it in whatever the signal must 
+be transformed: render the letter "A" on a text editor, calls an application when "ENTER" is pressed on a focused 
+shortcut in the desktop and so on.
+
+So what do I expect from the keyboard wight now? Nothing. I expect it from the key! Something is telling me that the key 
+may be a component itself, and the keyboard is actually a composition of keys.
+
+As TDD states, I'll start testing the key before implementing the component. But since I already know the basics of 
+testing, and for the sake of not repeating these things, let me create the basic render test also to save some time.
+```javascript 1.8
+// src/components/Keyboard/Key.test.js
+
+import React from "react";
+import ReactDOM from "react-dom";
+import Key from "./Key";
+import { shallow } from "enzyme";
+
+describe("Key", () => {
+  it("should render without errors", () => {
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    ReactDOM.render(<Key />, container);
+  });
+
+  it('should inform that it was pressed', () => {
+    const onClickMock = jest.fn();
+    const wrapper = shallow(<Key value="x" onClick={onClickMock} />);
+
+    wrapper.simulate('click');
+    expect(onClickMock).toBeCalledWith("x");
+  });
+});
+```
+I am using the `shallow` function from `emzyme` again. Since **Key** is a generic component now, we must inform which 
+key is being rendered and somehow retrieve that it was pressed. This will be achieved by passing a function to our 
+"onClick" event. This function will be called by passing the key's value as argument. Jest and enzyme allows me to 
+simulate a click on the Key component and check what happened to the function passed as "click" event. 
+
+I will assume that our new component will need a string `value` property to dynamic render the key letter and another 
+function `onClick` property that must be called when the button is pressed. 
+
+For the component, I'll grab a lot of the code that was already implemented inside the keyboard. The code to make these 
+tests pass will be something similar to the one below:
+```javascript 1.8
+// src/components/Keyboard/Key.js
+
+import React from "react";
+import { lowerCase } from "voca";
+import styled from "styled-components/macro";
+
+const StyledButton = styled.button`
+    background-color: black;
+    border-block-style: solid;
+    border-color: red;
+    border-radius: 3px;
+    border-width: 2px;
+    color: red;
+    font-family: Arial, serif;
+    font-size: larger;
+    height: 32px;
+    margin: 2px;
+    width: 32px;
+`;
+
+const Key = ({value, onClick}) => (
+  <StyledButton data-qa={`key-${lowerCase(value)}`} onClick={() => onClick(value)}>
+    {value}
+  </StyledButton>
+);
+
+export default Key;
+```
+React's `button` component inherited from the styled component created allows using the `onClick` event. It is the 
+corresponding `onclick` event from HTML's button. Both properties are being destructured as function parameters and the 
+event the key being pressed is being returned using an anonymous arrow function in the `onClick` event.
+
+## Properties Validation
+
+**To Be Continued**
+
+## Visualizing our Key Component
+
+**To Be Continued**
+
+## Applying keys to the Keyboard
 
 **To Be Continued**
