@@ -15,7 +15,16 @@ To follow this dream, I decided to start from scratch. Like I've never implement
 
 Let's try to make dreams reality! 
 
+**NOTE:** For those using IntelliJ IDEA or any other tool from JetBrains that allows working with React, I add some 
+settings that personally I find useful for development purposes, just check 
+[IntelliJ IDEA Tips](README.files/IntelliJ-IDEA-tips.md "IntelliJ IDEA Tips"). I've added notes like this one, specific
+for the subject being presented.
+
 ## Creating the application
+
+**NOTE:** For those using IntelliJ IDEA or any other tool from JetBrains that allows working with React, check 
+[IntelliJ IDEA Tips](README.files/IntelliJ-IDEA-tips.md#Getting-rid-of-the-annoying-warning-"Unresolved-function-or-method-describe"-on-your-test-files "IntelliJ IDEA Tips")
+to get rid of the annoying warning `Unresolved function or method describe` on your test files.
 
 From [Creating a New React App](https://reactjs.org/docs/create-a-new-react-app.html "Creating a New React App"):
 ```
@@ -23,9 +32,6 @@ npx create-react-app dumb-keyboard
 ```
 
 ## TDDing
-
-**NOTE:** For those using IntelliJ IDEA or any other tool from JetBrains that allows working with React, I add some 
-settings that personally I find useful for development purposes, just check [IntelliJ IDEA Tips](README.files/IntelliJ-IDEA-tips.md "IntelliJ IDEA Tips");
 
 #### Failing the most basic test
 Creat a file under `src/components/Keyboard` named `Keyboard.test.js`.
@@ -262,6 +268,10 @@ To help me style my keys (and everything else) I'll use a component based stylin
 2020) and have been enjoying it. There are a set of [motivations](https://styled-components.com/docs/basics#motivation 
 "motivations") in the website that I mostly agree with.
 
+**NOTE:** For those using IntelliJ IDEA or any other tool from JetBrains that allows working with React, check 
+[IntelliJ IDEA Tips](README.files/IntelliJ-IDEA-tips.md#Styled-Components-Plugin "IntelliJ IDEA Tips") for a cool plugin 
+that adds support to Styled Components.
+
 So, let's install it! 
 
 ``` 
@@ -278,7 +288,7 @@ like this:
 
 ![Changing Key Style in the Browser](README.files/changing-key-style-on-browser.png "Changing Key Style in the Browser")
 
-Not the best CSS, I know, but I'm just trying to see how it would look like. We can refactor it later.
+Not the best CSS, I know, but I'm just trying to see how it would look like in real time. We can refactor it later.
 
 Updating our keyboard using styled components would like just like that:
 ```javascript 1.8
@@ -294,10 +304,12 @@ const Key = styled.button`
     border-block-style: solid;
     border-color: red;
     border-radius: 3px;
-    border-width: 3px;
+    border-width: 2px;
     color: red;
+    font-family: Arial;
     font-size: larger;
     height: 32px;
+    margin: 2px;
     width: 32px;
 `;
 
@@ -324,4 +336,4 @@ applying conditionals using plain (ES6) Javascript code;
 3. Instead of using React's default button component, now a new one has been created and may be used instead. I can do 
 the same to my own components and also apply some sort of inheritance on them;
 
-TBD
+**To Be Continued**

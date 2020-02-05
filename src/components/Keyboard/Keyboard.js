@@ -8,10 +8,12 @@ const Key = styled.button`
     border-block-style: solid;
     border-color: red;
     border-radius: 3px;
-    border-width: 3px;
+    border-width: 2px;
     color: red;
+    font-family: Arial, serif;
     font-size: larger;
     height: 32px;
+    margin: 2px;
     width: 32px;
 `;
 
