@@ -1,5 +1,6 @@
-# Dumb Keyboard
-A generic purpose keyboard to be adapted as you wish
+# Dumb Keyboard 4 React
+
+A generic purpose keyboard using React to be adapted as you wish.
 
 Let's say that I dreamt about implementing a keyboard. I achieved that goal making a fast, functional, perhaps a 
 maintainable/extensible one. That's okay, the goal was having a _qwerty_ keyboard, that goal was achieved.
@@ -11,14 +12,17 @@ But then a dreamt again, dreamt about this...
 The main idea is that a simple board is nothing but a set of keys and according its manufacturer it may be transformed 
 into a _qwerty_ keyboard or a calculator or... Who knows?
 
-To follow this dream, I decided to start from scratch. Like I've never implemented a keyboard in my life.
+To follow this dream, I decided to start from scratch. Like I've never implemented a keyboard in my life. I am using 
+[React](https://reactjs.org/ "React") simply because I'm currently working with this technology and mostly because it is 
+my favorite [Single Page Application](https://en.wikipedia.org/wiki/Single-page_application "Single Page Application") 
+framework! Also, I'm using [ECMAScript 6](http://es6-features.org/ "ECMAScript 6") syntax (ES6).
 
 Let's try to make dreams reality! 
 
-**NOTE:** For those using IntelliJ IDEA or any other tool from JetBrains that allows working with React, I add some 
-settings that personally I find useful for development purposes, just check 
-[IntelliJ IDEA Tips](README.files/IntelliJ-IDEA-tips.md "IntelliJ IDEA Tips"). I've added notes like this one, specific
-for the subject being presented.
+**NOTE:** For those using [IntelliJ IDEA](https://www.jetbrains.com/idea/ "IntelliJ IDEA") or any other tool from 
+JetBrains that allows working with React, I add some settings that personally I find useful for development purposes, 
+just check [IntelliJ IDEA Tips](README.files/IntelliJ-IDEA-tips.md "IntelliJ IDEA Tips"). I've added notes like this 
+one, specific for the subject being presented.
 
 ## Creating the application
 
@@ -27,13 +31,18 @@ for the subject being presented.
 to get rid of the annoying warning `Unresolved function or method describe` on your test files.
 
 From [Creating a New React App](https://reactjs.org/docs/create-a-new-react-app.html "Creating a New React App"):
-```
+```shell script
 npx create-react-app dumb-keyboard
 ```
 
 ## TDDing
 
 #### Failing the most basic test
+
+I'm using the bundled test framework that comes with React when using the `create-react-app` command, 
+[Jest](https://jestjs.io/ "Jest"). It comes with the usual `describe`/`it` syntax found in other frameworks lie `mocha` 
+and `jasmine`.
+
 Creat a file under `src/components/Keyboard` named `Keyboard.test.js`.
 ```javascript
 // file: src/components/Keyboard/Keyboard.test.js
@@ -49,10 +58,17 @@ describe("Keyboard", () => {
   });
 });
 ```
+Here I use plain old Javascript DOM manipulation and [ReactDOM](https://reactjs.org/docs/react-dom.html "ReactDOM") to 
+render a simple component.
+
+I'm also using [Yarn](https://yarnpkg.com/ "Yarn") as my package manager since it is the one used by React by default.
+
 Run `yarn test`.
+
 #### Passing the most basic test 
-Test will obviously fail, let´s create the component  `Keyboard.js` under `src/components/Keyboard`. It is just to start 
-our basic development.
+
+The test will obviously fail, let´s create the component  `Keyboard.js` under `src/components/Keyboard`. It is just to 
+start our basic development.
 ```javascript
 // file: src/components/Keyboard/Keyboard.js
 
@@ -62,7 +78,7 @@ const Keyboard = () => <div>keyboard</div>;
 
 export default Keyboard;
 ```
-And change the previous test.
+And change the previous test importing our new component.
 ```javascript
 // file: src/components/Keyboard/Keyboard.test.js
 .
@@ -75,25 +91,27 @@ describe("Keyboard", () => {
 .
 .
 ```
-Run `yarn test`. Now the most basic test of all has passed!
+Run `yarn test` again. Now the most basic test of all has passed!
+
+NOTE: In order to keep the tests running after each code modification instead of running this command every single time,
+run `yarn test --watch`.
 
 #### Complicating things
-A keyboard needs a layout to hold the keys by their type. Let's start humble. The keyboard has only one key.
+A keyboard needs a layout to hold the keys by their type. Let me start humble. The keyboard has only one key.
 ```
 [A]
 ```
-To ease my work, I'll work with `enzyme` (https://airbnb.io/enzyme/). From the installation guide, I'll install the 
-version to be used with React 16 (or above?).
-
-Reference: https://airbnb.io/enzyme/docs/installation/
+To ease my work, I'll work with [Enzyme](https://airbnb.io/enzyme/ "Enzyme"). From the 
+[installation guide](https://airbnb.io/enzyme/docs/installation/ "Installation Guide"), I'll install the version to be 
+used with React 16 (or above?).
 
 But since we are using Yarn:
 ```
 yarn add --dev enzyme
 yarn add --dev enzyme-adapter-react-16
 ```
-Let's configure `src/setupTests.js` file to be able to test using Enzyme. Also, since we are using ES6, let's use this 
-snippet below.
+Let's configure [src/setupTests.js](https://create-react-app.dev/docs/running-tests/#srcsetuptestsjs "setupTests.js") 
+file to be able to test using Enzyme. Also, since we are using ES6, let's use the snippet below.
 ```javascript 1.8
 // file: src/setupTests.js
 
@@ -159,14 +177,18 @@ It will obviously fail on the the second expectation. There is no layout propert
 still hardcoded.
 
 I'll change the code so it passes the test, but before that, I'll install a nice library called 
-[lodash](https://lodash.com/ "lodash") ("A modern JavaScript utility library delivering modularity, performance & 
-extras"). It adds some null/undefined automatic checking, a lot of collections utility functions, and if properly used, 
+[lodash](https://lodash.com/ "lodash").
+
+> A modern JavaScript utility library delivering modularity, performance & extras
+
+It adds some null/undefined automatic checking, a lot of collections utility functions, and if properly used, 
 allows using Javascript in a more functional way.
 ```
 yarn add lodash
 ```
 I'll also need to use string functions, and for similar reason as before, I'll install a small library for string 
 manipulation that I'm very fond of, [voca](https://vocajs.com/ "voca"). According to the site:
+
 > The Voca library offers helpful functions to make string manipulations comfortable: change case, trim, pad, slugify, 
 > latinise, sprintf'y, truncate, escape and much more. The modular design allows to load the entire library, or 
 > individual functions to minimize the application builds. The library is fully tested, well documented and long-term 
@@ -417,6 +439,20 @@ corresponding `onclick` event from HTML's button. Both properties are being dest
 event the key being pressed is being returned using an anonymous arrow function in the `onClick` event.
 
 ## Properties Validation
+
+I have created a component that needs values passed to its properties in order to be rendered correctly. As the 
+application grows it will become harder and harder to manage properties checking. In that case I'll use 
+[PropTypes](https://github.com/facebook/prop-types "PropTypes").
+
+> Runtime type checking for React props and similar objects ... will check props passed to your components against those 
+> definitions, and warn in development if they don’t match.
+ 
+Before React 15.5 it was normally bundled within React. Now it is part of a separate library since it can be used with 
+other frameworks now. So I'll install PropTypes.
+```shell script
+yarn add prop-types
+```
+
 
 **To Be Continued**
 

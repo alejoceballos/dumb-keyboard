@@ -1,6 +1,7 @@
 import React from "react";
 import { lowerCase } from "voca";
 import styled from "styled-components/macro";
+import PropTypes from 'prop-types';
 
 const StyledButton = styled.button`
     background-color: black;
@@ -21,5 +22,14 @@ const Key = ({value, onClick}) => (
     {value}
   </StyledButton>
 );
+
+Key.propTypes = {
+  value: PropTypes.string.isRequired,
+  onClick: PropTypes.func,
+};
+
+Key.defaultProps = {
+  onClick: () => {}
+};
 
 export default Key;
