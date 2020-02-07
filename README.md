@@ -366,7 +366,7 @@ most of the keyboards just send signals to the computer that interprets it and t
 be transformed: render the letter "A" on a text editor, calls an application when "ENTER" is pressed on a focused 
 shortcut in the desktop and so on.
 
-So what do I expect from the keyboard wight now? Nothing. I expect it from the key! Something is telling me that the key 
+So what do I expect from the keyboard right now? Nothing. I expect it from the key! Something is telling me that the key 
 may be a component itself, and the keyboard is actually a composition of keys.
 
 As TDD states, I'll start testing the key before implementing the component. But since I already know the basics of 
@@ -395,7 +395,7 @@ describe("Key", () => {
   });
 });
 ```
-I am using the `shallow` function from `emzyme` again. Since **Key** is a generic component now, we must inform which 
+I am using the `shallow` function from `enzyme` again. Since **Key** is a generic component now, we must inform which 
 key is being rendered and somehow retrieve that it was pressed. This will be achieved by passing a function to our 
 "onClick" event. This function will be called by passing the key's value as argument. Jest and enzyme allows me to 
 simulate a click on the Key component and check what happened to the function passed as "click" event. 
@@ -452,7 +452,109 @@ other frameworks now. So I'll install PropTypes.
 ```shell script
 yarn add prop-types
 ```
+To apply the validations I'll change `Key.js` file.
+```javascript 1.8
+// src/components/Keyboard/Key.js
 
+.
+.
+.
+import PropTypes from 'prop-types';
+.
+.
+.
+Key.propTypes = {
+  value: PropTypes.string.isRequired,
+  onClick: PropTypes.func,
+};
+
+Key.defaultProps = {
+  onClick: () => {}
+};
+
+export default Key;
+```
+I added two properties validators, one being required and the other one, although it is not required, it will receive 
+a default value if not passed.
+
+Check 
+[PropTypes documentation](https://reactjs.org/docs/typechecking-with-proptypes.html#proptypes "PropTypes documentation") 
+for all validators types.
+
+Current modern browsers, some with the right plugins, may warn you about wrong component usage regarding attributes 
+validations. Take IntelliJ's example below.
+
+![IntelliJ IDEA tip](README.files/intellij-no-required-attribute-tip.png "IntelliJ IDEA tip")
+
+A better way to check on this validations not relying on IDE's features would be using ESLint. Adding ESLint to my 
+application and not allowing it to run unless all validations are okay is a good way to keep my code clean and standards
+following.
+
+## Finding and Fixing problems using ESLint
+
+[ESLint](https://eslint.org/ "ESLint") is a static checker that verifies and sometimes automatically fixes problems in 
+your code based on a set of rules configured in a file. It can point me out potential risks from my code and suggest 
+corrections. 
+
+According to the website:
+> ESLint is a tool for identifying and reporting on patterns found in ECMAScript/JavaScript code, with the goal of 
+> making code more consistent and avoiding bugs. In many ways, it is similar to JSLint and JSHint... 
+
+A drawback is that ESLint CLI initializer uses [npm]() as its package manager. Usually I don't like having two package 
+managers handling my libraries so I could install some ESLint dependencies myself using Yarn. I don't know if it would 
+make any difference, that's me being suspicious. I'll try installing the dependencies myself and check if it works.
+
+Install everything, ESLint + dependencies.
+```shell script
+yarn add eslint --dev
+yarn add eslint-plugin-react@latest --dev
+yarn add eslint-config-google@latest --dev
+```
+Set up the default configuration file.
+```shell script
+npx eslint --init
+```
+I decided to answer the base questions to determine my ESLint settings. My choices are below:
+```
+? How would you like to use ESLint? To check syntax, find problems, and enforce code style              
+? What type of modules does your project use? JavaScript modules (import/export)                        
+? Which framework does your project use? React                                                          
+? Does your project use TypeScript? No                                                                  
+? Where does your code run? Browser                                                                     
+? How would you like to define a style for your project? Use a popular style guide                      
+? Which style guide do you want to follow? Google: https://github.com/google/eslint-config-google       
+? What format do you want your config file to be in? JavaScript  
+? Would you like to install them now with npm? No   
+```
+A message like the one below may show up in your terminal, it did to me.
+```
+Warning: React version not specified in eslint-plugin-react settings. 
+See https://github.com/yannickcr/eslint-plugin-react#configuration .
+```
+It has a set of preset rules that can be used. I may or may not use it later, but now I'll test my new linter. 
+Run it.
+```shell script
+npx eslint src/components/Keyboard/Key.test.js
+```
+And look at that!
+```
+/dumb-keyboard/src/components/Keyboard/Key.test.js                                   
+ 1:19  error  Strings must use singlequote         quotes                                                
+ 2:22  error  Strings must use singlequote         quotes                                                
+ 3:17  error  Strings must use singlequote         quotes                                                
+ 4:9   error  There should be no space after '{'   object-curly-spacing                                  
+ 4:17  error  There should be no space before '}'  object-curly-spacing                                  
+ 4:25  error  Strings must use singlequote         quotes                                                
+ 6:10  error  Strings must use singlequote         quotes                                                
+ 7:6   error  Strings must use singlequote         quotes                                                
+ 8:46  error  Strings must use singlequote         quotes                                               
+18:40  error  Strings must use singlequote         quotes                                                                                                                                                     ✖ 10 problems (10 errors, 0 warnings)                                                                     10 errors and 0 warnings potentially fixable with the `--fix` option.  
+```
+Seems I've been programming quite against Google's rules! Let's see what ESLint can do for me.
+```shell script
+npx eslint src/components/Keyboard/Key.test.js --fix
+```
+And _voilá_! But it still didn't identified my Key component with no attributes, let's try to make it see this mistake.
 
 **To Be Continued**
 

@@ -1,11 +1,11 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import Key from "./Key";
-import { shallow } from "enzyme";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Key from './Key';
+import {shallow} from 'enzyme';
 
-describe("Key", () => {
-  it("should render without errors", () => {
-    const container = document.createElement("div");
+describe('Key', () => {
+  it('should render without errors', () => {
+    const container = document.createElement('div');
     document.body.appendChild(container);
     ReactDOM.render(<Key />, container);
   });
@@ -15,6 +15,6 @@ describe("Key", () => {
     const wrapper = shallow(<Key value="x" onClick={onClickMock} />);
 
     wrapper.simulate('click');
-    expect(onClickMock).toBeCalledWith("x");
+    expect(onClickMock).toBeCalledWith('x');
   });
 });
