@@ -1,9 +1,9 @@
 import React from 'react';
-import Keyboard from "../components/Keyboard/Keyboard";
+import Keyboard from '../components/Keyboard/Keyboard';
 
 export default {
   title: 'Keyboard',
-  component: Keyboard,
+  component: Keyboard
 };
 
 export const Basic = () => <Keyboard layout={['A', 'B', 'C']} />;

@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 import { map } from 'lodash';
-import { lowerCase } from "voca";
-import styled from "styled-components/macro";
+import { lowerCase } from 'voca';
+import styled from 'styled-components/macro';
 
 const Key = styled.button`
     background-color: black;

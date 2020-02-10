@@ -1,6 +1,6 @@
-import React from "react";
-import { lowerCase } from "voca";
-import styled from "styled-components/macro";
+import React from 'react';
+import { lowerCase } from 'voca';
+import styled from 'styled-components/macro';
 import PropTypes from 'prop-types';
 
 const StyledButton = styled.button`
@@ -17,7 +17,7 @@ const StyledButton = styled.button`
     width: 32px;
 `;
 
-const Key = ({value, onClick}) => (
+const Key = ({ value, onClick }) => (
   <StyledButton data-qa={`key-${lowerCase(value)}`} onClick={() => onClick(value)}>
     {value}
   </StyledButton>
@@ -25,7 +25,7 @@ const Key = ({value, onClick}) => (
 
 Key.propTypes = {
   value: PropTypes.string.isRequired,
-  onClick: PropTypes.func,
+  onClick: PropTypes.func
 };
 
 Key.defaultProps = {

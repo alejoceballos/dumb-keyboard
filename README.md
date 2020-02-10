@@ -504,13 +504,9 @@ A drawback is that ESLint CLI initializer uses [npm]() as its package manager. U
 managers handling my libraries so I could install some ESLint dependencies myself using Yarn. I don't know if it would 
 make any difference, that's me being suspicious. I'll try installing the dependencies myself and check if it works.
 
-Install everything, ESLint + dependencies.
-```shell script
-yarn add eslint --dev
-yarn add eslint-plugin-react@latest --dev
-yarn add eslint-config-google@latest --dev
-```
-Set up the default configuration file.
+Set up the default configuration file with JavaScript Standards.
+
+**NOTE:** Do not select to install dependencies automatically, we will install them later.
 ```shell script
 npx eslint --init
 ```
@@ -522,40 +518,141 @@ I decided to answer the base questions to determine my ESLint settings. My choic
 ? Does your project use TypeScript? No                                                                  
 ? Where does your code run? Browser                                                                     
 ? How would you like to define a style for your project? Use a popular style guide                      
-? Which style guide do you want to follow? Google: https://github.com/google/eslint-config-google       
+? Which style guide do you want to follow? Standard: https://github.com/standard/standard       
 ? What format do you want your config file to be in? JavaScript  
 ? Would you like to install them now with npm? No   
 ```
-A message like the one below may show up in your terminal, it did to me.
+The last question informs which packages should be installed. I'll install them manually and some more
+```shell script
+yarn add eslint --dev
+yarn add eslint-config-standard --dev
+yarn add eslint-plugin-standard --dev
+yarn add eslint-plugin-promise --dev
+yarn add eslint-plugin-import --dev
+yarn add eslint-plugin-node --dev
+
+yarn add eslint-plugin-react --dev
 ```
-Warning: React version not specified in eslint-plugin-react settings. 
-See https://github.com/yannickcr/eslint-plugin-react#configuration .
-```
-It has a set of preset rules that can be used. I may or may not use it later, but now I'll test my new linter. 
-Run it.
+Now I'll test my new linter. Run it.
 ```shell script
 npx eslint src/components/Keyboard/Key.test.js
 ```
 And look at that!
 ```
 /dumb-keyboard/src/components/Keyboard/Key.test.js                                   
- 1:19  error  Strings must use singlequote         quotes                                                
- 2:22  error  Strings must use singlequote         quotes                                                
- 3:17  error  Strings must use singlequote         quotes                                                
- 4:9   error  There should be no space after '{'   object-curly-spacing                                  
- 4:17  error  There should be no space before '}'  object-curly-spacing                                  
- 4:25  error  Strings must use singlequote         quotes                                                
- 6:10  error  Strings must use singlequote         quotes                                                
- 7:6   error  Strings must use singlequote         quotes                                                
- 8:46  error  Strings must use singlequote         quotes                                               
-18:40  error  Strings must use singlequote         quotes                                                                                                                                                     ✖ 10 problems (10 errors, 0 warnings)                                                                     10 errors and 0 warnings potentially fixable with the `--fix` option.  
+   1:19  error  Strings must use singlequote  quotes
+   1:26  error  Extra semicolon               semi
+   2:22  error  Strings must use singlequote  quotes
+   2:33  error  Extra semicolon               semi
+   3:17  error  Strings must use singlequote  quotes
+   3:24  error  Extra semicolon               semi
+   4:25  error  Strings must use singlequote  quotes
+   4:33  error  Extra semicolon               semi
+   6:1   error  'describe' is not defined     no-undef
+   6:10  error  Strings must use singlequote  quotes
+   7:3   error  'it' is not defined           no-undef
+   7:6   error  Strings must use singlequote  quotes
+   8:46  error  Strings must use singlequote  quotes
+   8:52  error  Extra semicolon               semi
+   9:41  error  Extra semicolon               semi
+  10:40  error  Extra semicolon               semi
+  11:5   error  Extra semicolon               semi
+  13:3   error  'it' is not defined           no-undef
+  14:25  error  'jest' is not defined         no-undef
+  14:34  error  Extra semicolon               semi
+  15:69  error  Extra semicolon               semi
+  17:30  error  Extra semicolon               semi
+  18:5   error  'expect' is not defined       no-undef
+  18:40  error  Strings must use singlequote  quotes
+  18:44  error  Extra semicolon               semi
+  19:5   error  Extra semicolon               semi
+  20:3   error  Extra semicolon               semi
+
+✖ 27 problems (27 errors, 0 warnings)
+  22 errors and 0 warnings potentially fixable with the `--fix` option.
 ```
-Seems I've been programming quite against Google's rules! Let's see what ESLint can do for me.
+Seems I've been programming quite against Standard's rules! But I do like semicolons at the end. Also I like 4 spaces
+indentation.
+
+Let me update config `.eslintrc.js` file.
+```javascript 1.8
+// .eslintrc.js
+
+module.exports = {
+    .
+    .
+    .
+    "rules": {
+        "semi": [2, "always"],
+        "indent": ["error", 4]
+    },
+    .
+    .
+    .
+};
+```  
+Now let me see what ESLint can do for me.
 ```shell script
 npx eslint src/components/Keyboard/Key.test.js --fix
 ```
-And _voilá_! But it still didn't identified my Key component with no attributes, let's try to make it see this mistake.
+And _voilá_! But it still couldn't fix a lot of things:
+```
+/dumb-keyboard/src/components/Keyboard/Key.test.js
+   6:1   error  'describe' is not defined  no-undef
+   7:3   error  'it' is not defined        no-undef
+  13:3   error  'it' is not defined        no-undef
+  14:25  error  'jest' is not defined      no-undef
+  18:5   error  'expect' is not defined    no-undef
 
+✖ 5 problems (5 errors, 0 warnings)
+```
+This errors are related to Jest, and according React's test documentation, I shouldn't have to import them. So I'll
+make ESLint consider it as an environment library updating its config file `.eslintrc.js` again.
+```javascript 1.8
+// .eslintrc.js
+
+module.exports = {
+    "env": {
+        .
+        .
+        .
+        "jest": true
+    },
+    .
+    .
+    .
+};
+```
+When I run the linter again (`npx eslint src/components/Keyboard/Key.test.js`) all errors had vanished. 
+  
+Still, a message like the one below may show up in your terminal, it did to me.
+```
+Warning: React version not specified in eslint-plugin-react settings. 
+See https://github.com/yannickcr/eslint-plugin-react#configuration .
+```
+To fix it, add the settings attribute to the config as explained in 
+[eslint-plugin-react configuration](https://github.com/yannickcr/eslint-plugin-react#configuration "eslint-plugin-react configuration")
+page.
+```javascript 1.8
+// .eslintrc.js
+
+module.exports = {
+    .
+    .
+    .
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    }
+};
+```  
+I will run the linter for my whole project.
+```shell script
+npx eslint src
+```
+There are so many violations (some from the `create-react-app` itself!). Let me add `--fix` at the end of the previous 
+command and see how it deals with all of them. 
 **To Be Continued**
 
 ## Visualizing our Key Component
