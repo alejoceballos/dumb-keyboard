@@ -787,4 +787,12 @@ Alright. Enough of fooling around. Let me go back to the keyboard.
 
 ## Applying keys to the Keyboard
 
+The keyboard ain't using the new key component yet. I've also been thinking that I do not need to define a layout right 
+now. A layout is how the keys are displayed on the board, and right now, according to our abstraction, the board can be
+part of a Qwerty keyboard or a calculator machine keyboard.
+
+The base keyboard will hold a set of keys and its layout may be defined later. And to prevent unnecessary re-rendering  
+of keys I'm not going to pass a set of characters that dynamically creates the desired keys (I've did it before), I'll 
+pass the keys components already created.
+
 **To Be Continued**
