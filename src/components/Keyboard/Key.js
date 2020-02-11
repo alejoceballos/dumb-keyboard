@@ -15,6 +15,18 @@ const StyledButton = styled.button`
     height: 32px;
     margin: 2px;
     width: 32px;
+    
+    :focus {
+      background: #3a3a3a;
+      border-color: #ff7970;
+      color: #ff7970;
+    }
+    
+    :active {
+      background: red;
+      border-color: black;
+      color: black;
+    }
 `;
 
 const Key = ({ value, onClick }) => (

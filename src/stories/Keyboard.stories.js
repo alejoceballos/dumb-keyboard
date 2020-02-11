@@ -6,4 +6,4 @@ export default {
     component: Keyboard
 };
 
-export const Basic = () => <Keyboard layout={['A', 'B', 'C']} />;
+export const BasicKeyboard = () => <Keyboard layout={['A', 'B', 'C']} />;

@@ -473,7 +473,6 @@ yarn add prop-types
 To apply the validations I'll change `Key.js` file.
 ```javascript 1.8
 // src/components/Keyboard/Key.js
-
 .
 .
 .
@@ -730,7 +729,61 @@ ReactDOM.render(<Key value="x" />, container);
 
 ## Visualizing our Key Component
 
-**To Be Continued**
+So, by now I got a new decoupled component. Let me work better on its style starting with a separate story in the 
+storybook.
+
+I'll create a `src/stories/Key.stories.js` file and make a simple story, running `yarn storybook` right after.
+```javascript 1.8
+// src/stories/Key.stories.js
+
+import React from 'react';
+import Key from '../components/Keyboard/Key';
+
+export default {
+    title: 'Key',
+    component: Key
+};
+
+export const BasicKey = () => <Key value="X" />;
+```
+I've named the constant `BasicKey` because it seems it was conflicting with the one in the `Keyboard` story.
+
+Now I'll fool around with my key a little bit. Remember that all CSS I'm adding here will be parameterized in the 
+future. Perhaps I even remove the styled to use plain CSS. Let me see how it goes.
+```javascript 1.8
+.
+.
+.
+const StyledButton = styled.button`
+    background-color: black;
+    border-block-style: solid;
+    border-color: red;
+    border-radius: 3px;
+    border-width: 2px;
+    color: red;
+    font-family: Arial, serif;
+    font-size: larger;
+    height: 32px;
+    margin: 2px;
+    width: 32px;
+    
+    :focus {
+      background: #3a3a3a;
+      border-color: #ff7970;
+      color: #ff7970;
+    }
+    
+    :active {
+      background: red;
+      border-color: black;
+      color: black;
+    }
+`;
+.
+.
+.
+```
+Alright. Enough of fooling around. Let me go back to the keyboard.
 
 ## Applying keys to the Keyboard
 
