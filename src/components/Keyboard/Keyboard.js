@@ -18,14 +18,14 @@ const Key = styled.button`
 `;
 
 const Keyboard = ({ layout }) => (
-  <div>
-    {map(layout, key => {
-      const uniqueKey = `key-${lowerCase(key)}`;
-      return (
-        <Key key={uniqueKey} data-qa={uniqueKey}>{key}</Key>
-      );
-    })}
-  </div>
+    <div>
+        {map(layout, key => {
+            const uniqueKey = `key-${lowerCase(key)}`;
+            return (
+                <Key key={uniqueKey} data-qa={uniqueKey}>{key}</Key>
+            );
+        })}
+    </div>
 );
 
 export default Keyboard;

@@ -24,7 +24,9 @@ module.exports = {
         "react"
     ],
     "rules": {
-        semi: [2, "always"]
+        "semi": [2, "always"],
+        "indent": ["error", 4],
+        "react/prop-types": [2]
     },
     "settings": {
         "react": {

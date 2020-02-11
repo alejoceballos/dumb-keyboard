@@ -18,18 +18,18 @@ const StyledButton = styled.button`
 `;
 
 const Key = ({ value, onClick }) => (
-  <StyledButton data-qa={`key-${lowerCase(value)}`} onClick={() => onClick(value)}>
-    {value}
-  </StyledButton>
+    <StyledButton data-qa={`key-${lowerCase(value)}`} onClick={() => onClick(value)}>
+        {value}
+    </StyledButton>
 );
 
 Key.propTypes = {
-  value: PropTypes.string.isRequired,
-  onClick: PropTypes.func
+    value: PropTypes.string.isRequired,
+    onClick: PropTypes.func
 };
 
 Key.defaultProps = {
-  onClick: () => {}
+    onClick: () => {}
 };
 
 export default Key;

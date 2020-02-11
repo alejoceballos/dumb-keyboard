@@ -24,6 +24,21 @@ JetBrains that allows working with React, I add some settings that personally I 
 just check [IntelliJ IDEA Tips](README.files/IntelliJ-IDEA-tips.md "IntelliJ IDEA Tips"). I've added notes like this 
 one, specific for the subject being presented.
 
+## Index
+
+1. [Creating the application](#creating-the-application)
+2. [TDDing](#tdding)
+    1. [Failing the most basic test](#failing-the-most-basic-test)
+    2. [Passing the most basic test](#passing-the-most-basic-test)
+    3. [Complicating things](#complicating-things)
+    4. [Adding Lodash](#adding-lodash)
+    5. [Adding Voca](#adding-voca)
+3. [Visualizing the Component in Real Time](#visualizing-the-component-in-real-time)
+4. [Styling The Keyboard](#styling-the-keyboard)
+5. [Responding to Events](#responding-to-events)
+6. [Properties Validation](#properties-validation)
+7. [Finding and Fixing problems using ESLint](#finding-and-fixing-problems-using-eslint)
+
 ## Creating the application
 
 **NOTE:** For those using IntelliJ IDEA or any other tool from JetBrains that allows working with React, check 
@@ -106,7 +121,7 @@ To ease my work, I'll work with [Enzyme](https://airbnb.io/enzyme/ "Enzyme"). Fr
 used with React 16 (or above?).
 
 But since we are using Yarn:
-```
+```shell script
 yarn add --dev enzyme
 yarn add --dev enzyme-adapter-react-16
 ```
@@ -176,6 +191,7 @@ it("should accept a dynamic set of keys", () => {
 It will obviously fail on the the second expectation. There is no layout property in our keyboard and "A" button is 
 still hardcoded.
 
+#### Adding Lodash
 I'll change the code so it passes the test, but before that, I'll install a nice library called 
 [lodash](https://lodash.com/ "lodash").
 
@@ -183,9 +199,11 @@ I'll change the code so it passes the test, but before that, I'll install a nice
 
 It adds some null/undefined automatic checking, a lot of collections utility functions, and if properly used, 
 allows using Javascript in a more functional way.
-```
+```shell script
 yarn add lodash
 ```
+
+#### Adding Voca 
 I'll also need to use string functions, and for similar reason as before, I'll install a small library for string 
 manipulation that I'm very fond of, [voca](https://vocajs.com/ "voca"). According to the site:
 
@@ -193,7 +211,7 @@ manipulation that I'm very fond of, [voca](https://vocajs.com/ "voca"). Accordin
 > latinise, sprintf'y, truncate, escape and much more. The modular design allows to load the entire library, or 
 > individual functions to minimize the application builds. The library is fully tested, well documented and long-term 
 > supported. 
-```
+```shell script
 yarn add voca
 ```
 And now, the code!
@@ -243,7 +261,7 @@ rescue!
 I really like Storybook to visually check if my components are being rendered as I want. It runs a separate server
 locally that allows accessing all my components in a single, organized page!
 
-Quoting the [Storybook for React site](https://storybook.js.org/docs/basics/introduction/ "Storybook for React"):
+Quoting the [Storybook for React](https://storybook.js.org/docs/basics/introduction/ "Storybook for React") site:
 > Storybook is a user interface development environment and playground for UI components. The tool enables developers to 
 > create components independently and showcase components interactively in an isolated development environment. 
 
@@ -258,10 +276,10 @@ A set of development dependencies and scripts will be added to your `package.jso
 will be created in `.storybook/main.js` and a basic example in `src/stories`.
 
 You can check the default Storybook site and examples with the command below.
-``` 
+```shell script
 yarn storybook
 ``` 
-The default STory Book can be seen by typing <http://localhost:9009> on your browser.
+The default Story Book can be seen by typing <http://localhost:9009> on your browser.
 
 Now we can create a story for our component and check how it will be displayed in our application. Create a new 
 file named `Keyboard.stories.js` named `src/stories`.
@@ -296,9 +314,9 @@ with.
 that adds support to Styled Components.
 
 So, let's install it! 
-``` 
+```shell script
 yarn add styled-components
-``` 
+```
 But how should the keyboard look like? I have what I consider a "fancy" laptop keyboard (too fancy in my opinion) that I
 could mimic. Something like this:
 
@@ -481,14 +499,14 @@ Check
 [PropTypes documentation](https://reactjs.org/docs/typechecking-with-proptypes.html#proptypes "PropTypes documentation") 
 for all validators types.
 
-Current modern browsers, some with the right plugins, may warn you about wrong component usage regarding attributes 
-validations. Take IntelliJ's example below.
+Current modern IDEs, some with the right plugins, may warn you about wrong component usage, styling and so on. Take 
+IntelliJ's example below.
 
-![IntelliJ IDEA tip](README.files/intellij-no-required-attribute-tip.png "IntelliJ IDEA tip")
+![IntelliJ IDEA tip](README.files/intellij-no-semicolon-tip.png "IntelliJ IDEA tip")
 
-A better way to check on this validations not relying on IDE's features would be using ESLint. Adding ESLint to my 
-application and not allowing it to run unless all validations are okay is a good way to keep my code clean and standards
-following.
+A better way to check on this validations and not relying on IDE's features would be using ESLint. Adding ESLint to my 
+application and not allowing it to run unless all validations are okay is a good way to keep my code clean and that 
+standards are being followed.
 
 ## Finding and Fixing problems using ESLint
 
@@ -500,11 +518,12 @@ According to the website:
 > ESLint is a tool for identifying and reporting on patterns found in ECMAScript/JavaScript code, with the goal of 
 > making code more consistent and avoiding bugs. In many ways, it is similar to JSLint and JSHint... 
 
-A drawback is that ESLint CLI initializer uses [npm]() as its package manager. Usually I don't like having two package 
-managers handling my libraries so I could install some ESLint dependencies myself using Yarn. I don't know if it would 
-make any difference, that's me being suspicious. I'll try installing the dependencies myself and check if it works.
+A drawback is that ESLint CLI initializer uses [npm](https://www.npmjs.com/ "npm") as its package manager. Usually I 
+don't like having two package managers handling my libraries so I could install some ESLint dependencies myself using 
+Yarn. I don't know if it would make any difference, that's me being suspicious. I'll try installing the dependencies 
+myself and check if it works.
 
-Set up the default configuration file with JavaScript Standards.
+I'll start by setting up the default configuration file with JavaScript and React standards.
 
 **NOTE:** Do not select to install dependencies automatically, we will install them later.
 ```shell script
@@ -522,7 +541,7 @@ I decided to answer the base questions to determine my ESLint settings. My choic
 ? What format do you want your config file to be in? JavaScript  
 ? Would you like to install them now with npm? No   
 ```
-The last question informs which packages should be installed. I'll install them manually and some more
+The last question informs which packages should be installed. I'll install them manually.
 ```shell script
 yarn add eslint --dev
 yarn add eslint-config-standard --dev
@@ -530,10 +549,9 @@ yarn add eslint-plugin-standard --dev
 yarn add eslint-plugin-promise --dev
 yarn add eslint-plugin-import --dev
 yarn add eslint-plugin-node --dev
-
 yarn add eslint-plugin-react --dev
 ```
-Now I'll test my new linter. Run it.
+Now I'll test my new linter.
 ```shell script
 npx eslint src/components/Keyboard/Key.test.js
 ```
@@ -574,7 +592,7 @@ And look at that!
 Seems I've been programming quite against Standard's rules! But I do like semicolons at the end. Also I like 4 spaces
 indentation.
 
-Let me update config `.eslintrc.js` file.
+Let me update my config `.eslintrc.js` file.
 ```javascript 1.8
 // .eslintrc.js
 
@@ -606,8 +624,9 @@ And _voilá_! But it still couldn't fix a lot of things:
 
 ✖ 5 problems (5 errors, 0 warnings)
 ```
-This errors are related to Jest, and according React's test documentation, I shouldn't have to import them. So I'll
-make ESLint consider it as an environment library updating its config file `.eslintrc.js` again.
+This errors are related to Jest, and according React's test documentation, I shouldn't have to import them since they 
+are magically injected through `src/setupTests.js` (I think). So I'll make ESLint consider it as an environment library 
+updating its config file `.eslintrc.js` again.
 ```javascript 1.8
 // .eslintrc.js
 
@@ -623,14 +642,14 @@ module.exports = {
     .
 };
 ```
-When I run the linter again (`npx eslint src/components/Keyboard/Key.test.js`) all errors had vanished. 
+When I run the linter again (`npx eslint src/components/Keyboard/Key.test.js`), almost all errors had vanished. 
   
-Still, a message like the one below may show up in your terminal, it did to me.
+Still, a message similar to the one below may show up in the terminal, it showed up to me.
 ```
 Warning: React version not specified in eslint-plugin-react settings. 
 See https://github.com/yannickcr/eslint-plugin-react#configuration .
 ```
-To fix it, add the settings attribute to the config as explained in 
+To fix it, I've added the settings attribute to the config as explained in 
 [eslint-plugin-react configuration](https://github.com/yannickcr/eslint-plugin-react#configuration "eslint-plugin-react configuration")
 page.
 ```javascript 1.8
@@ -653,7 +672,61 @@ npx eslint src
 ```
 There are so many violations (some from the `create-react-app` itself!). Let me add `--fix` at the end of the previous 
 command and see how it deals with all of them. 
-**To Be Continued**
+
+The only one left was:
+```
+/dumb-keyboard/src/components/Keyboard/Keyboard.js                                  
+  20:21  error  'layout' is missing in props validation  react/prop-types
+```
+I'll leave this one for when I get back to this file.
+
+My last change to ESLint `.eslintrc.js` config file will be...
+```javascript 1.8
+// .eslintrc.js
+
+module.exports = {
+    .
+    .
+    .
+    "rules": {
+        .
+        .
+        .
+        "react/prop-types": [2]
+    },
+    .
+    .
+    .
+};
+```  
+According to 
+[ESLint Plugin React PropTypes](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prop-types.md "ESLint Plugin React PropTypes")
+documentation, it will...
+> Prevent missing props validation in a React component definition
+
+I hope so.
+
+**NOTE:** For those using IntelliJ IDEA or any other tool from JetBrains that allows working with React, check 
+[IntelliJ IDEA Tips](README.files/IntelliJ-IDEA-tips.md#eslint-autofix-execution-using-file-watchers "IntelliJ IDEA Tips") 
+to configure _autolint_ using File Watchers.
+
+After all of that, running our tests will raise the following message:
+```
+console.error node_modules/prop-types/checkPropTypes.js:20
+Warning: Failed prop type: The prop `value` is marked as required in `Key`, but its value is `undefined`.
+in Key (at Key.test.js:10)
+```
+It is complaining about _Key_ being declared with no "value" property properly set. To fix it just add the value 
+attribute to our rendering test.
+```javascript 1.8
+.
+.
+.
+ReactDOM.render(<Key value="x" />, container);
+.
+.
+.
+```
 
 ## Visualizing our Key Component
 
