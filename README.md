@@ -53,7 +53,6 @@ npx create-react-app dumb-keyboard
 ## TDDing
 
 #### Failing the most basic test
-
 I'm using the bundled test framework that comes with React when using the `create-react-app` command, 
 [Jest](https://jestjs.io/ "Jest"). It comes with the usual `describe`/`it` syntax found in other frameworks lie `mocha` 
 and `jasmine`.
@@ -81,7 +80,6 @@ I'm also using [Yarn](https://yarnpkg.com/ "Yarn") as my package manager since i
 Run `yarn test`.
 
 #### Passing the most basic test 
-
 The test will obviously fail, let´s create the component  `Keyboard.js` under `src/components/Keyboard`. It is just to 
 start our basic development.
 ```javascript
@@ -793,6 +791,94 @@ part of a Qwerty keyboard or a calculator machine keyboard.
 
 The base keyboard will hold a set of keys and its layout may be defined later. And to prevent unnecessary re-rendering  
 of keys I'm not going to pass a set of characters that dynamically creates the desired keys (I've did it before), I'll 
-pass the keys components already created.
+pass a set of key components already created.
+
+First, to the test.
+
+#### Running only one test at a time
+I do not want to worry about all my tests breaking at once, I'll refactor my component by running existent tests one by 
+one. I'll use the `only` method (actually, the method called `only`) from the `it` function. Also will pass an empty 
+array to the newly decided to create `keys` property.
+```javascript 1.8
+// file: src/components/Keyboard/Keyboard.test.js
+.
+.
+.
+describe('Keyboard', () => {
+    it.only('should render without errors', () => {
+        .
+        .
+        .
+        ReactDOM.render(<Keyboard keys={[]} />, container);
+    });
+.
+.
+.
+});
+```
+Humm... No ESLint complains regarding my test, but there is still that one complain about the `layout` property not 
+being declared. 
+
+#### Declaring a typed array property
+Well, it ain't going to, instead I'll declare `keys` as a mandatory one.
+
+```javascript
+// file: src/components/Keyboard/Keyboard.js
+.
+.
+.
+Keyboard.propTypes = {
+    keys: PropTypes.arrayOf(PropTypes.objectOf(Key)).isRequired
+};
+
+export default Keyboard;
+```
+This is how powerful `PropTypes` can get. I'm telling to the world (specially to the linter) that my Keyboard must have
+a property called `keys` and it is an `array`. Even better, it is an array of type `Key` and it is mandatory!
+
+Just after doing this a lot of errors and warnings will jump out of the bushes and try to grab me, so let me fix them 
+all at once.
+```javascript 1.8
+// file: src/components/Keyboard/Keyboard.js
+
+import React from 'react';
+import { map } from 'lodash';
+import PropTypes from 'prop-types';
+import Key from './Key';
+
+const Keyboard = ({ keys }) => <div>{map(keys, key => key)}</div>;
+
+Keyboard.propTypes = {
+    keys: PropTypes.arrayOf(PropTypes.objectOf(Key)).isRequired
+};
+
+export default Keyboard;
+```
+My keyboard component just turned out to be simpler as I thought. But how are other tests executions? Let me put the 
+`only` method on this test below:
+```javascript 1.8
+// file: src/components/Keyboard/Keyboard.test.js
+.
+.
+.
+describe('Keyboard', () => {
+    .
+    .
+    .
+    it.only('should find a simple key', () => { 
+        .
+        .
+        .
+    });
+.
+.
+.
+});
+```
+Got a `Warning: Failed prop type: The prop 'keys' is marked as required in 'Keyboard', but its value is 'undefined'` and
+also a `Method “text” is meant to be run on 1 node. 0 found instead`. Totally expected! To fix it I may need to try a
+new (sometimes disliked) approach.
+
+#### Testing the integration between components
 
 **To Be Continued**

@@ -7,10 +7,10 @@ describe('Keyboard', () => {
     it('should render without errors', () => {
         const container = document.createElement('div');
         document.body.appendChild(container);
-        ReactDOM.render(<Keyboard />, container);
+        ReactDOM.render(<Keyboard keys={[]} />, container);
     });
 
-    it('should find a simple key', () => {
+    it.only('should find a simple key', () => {
         const keyboardLayout = ['A'];
         const wrapper = shallow(<Keyboard layout={keyboardLayout} />);
 
