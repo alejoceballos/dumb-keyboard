@@ -1,5 +1,5 @@
 import React from 'react';
-import Keyboard from '../components/Keyboard/Keyboard';
+import Keyboard from '../components/keyboard';
 import Key from '../components/Keyboard/Key';
 
 export default {

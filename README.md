@@ -989,4 +989,23 @@ export const BasicKeyboard = () => {
 ```
 And everything seems to be working now.
 
+## Folder restructure
+
+Before going on, I will do a little refactoring on the folder structures for future architectural changes. First I'll
+create a `key` folder under the `Keyboard` folder and move my `Key.js` and `Key.test.js` to it. After that I will rename
+the `Keyboard` folder all to lowercase. The result will be:
+```
+├── components                                                                                          
+│   └── keyboard                                                                                        
+│       ├── Keyboard.js                                                                                 
+│       ├── Keyboard.test.js                                                                            
+│       └── key                                                                                         
+│           ├── Key.js                                                                                  
+│           └── Key.test.js                                                                             
+```  
+
+#### No need to import the full pathname
+After that I'll create `package.json` files inside each folder. It will be used to simplify my imports without the need
+to fully address the file pathname.
+
 **To Be Continued**

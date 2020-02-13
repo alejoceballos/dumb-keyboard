@@ -1,0 +1,5 @@
+{
+    "name": "keyboard",
+    "private": true,
+    "main": "./Keyboard.js"
+}
