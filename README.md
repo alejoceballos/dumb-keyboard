@@ -38,6 +38,17 @@ one, specific for the subject being presented.
 5. [Responding to Events](#responding-to-events)
 6. [Properties Validation](#properties-validation)
 7. [Finding and Fixing problems using ESLint](#finding-and-fixing-problems-using-eslint)
+    1. [Setting Up ESLint](#Setting-Up-ESLint "Setting Up ESLint")
+    2. [Updating ESLint Configuration to match my code style](#Updating-ESLint-Configuration-to-match-my-code-style "Updating ESLint Configuration to match my code style") 
+    3. [Using ESLint to automatically fix different styling](#Using-ESLint-to-automatically-fix-different-styling "Using ESLint to automatically fix different styling")
+    4. [Preventing ESLint errors for global libraries](#Preventing-ESLint-errors-for-global-libraries "Preventing ESLint errors for global libraries")
+    5. [Polishing my ESLint configurations](#Polishing-my-ESLint-configurations "Polishing my ESLint configurations")
+8. [Visualizing our Key Component](#Visualizing-our-Key-Component "Visualizing our Key Component")
+9. [Applying keys to the Keyboard](#Applying-keys-to-the-Keyboard "Applying keys to the Keyboard")
+    1. [Running only one test at a time](#Running-only-one-test-at-a-time "Running only one test at a time")
+    2. [Declaring a typed array property](#Declaring-a-typed-array-property "Declaring a typed array property")
+    3. [Testing the integration between components](#Testing-the-integration-between-components "Testing the integration between components")
+    4. [Visualizing our new keyboard](#Visualizing-our-new-keyboard "Visualizing our new keyboard")
 
 ## Creating the application
 
@@ -520,6 +531,7 @@ don't like having two package managers handling my libraries so I could install 
 Yarn. I don't know if it would make any difference, that's me being suspicious. I'll try installing the dependencies 
 myself and check if it works.
 
+#### Setting Up ESLint
 I'll start by setting up the default configuration file with JavaScript and React standards.
 
 **NOTE:** Do not select to install dependencies automatically, we will install them later.
@@ -586,6 +598,8 @@ And look at that!
 ✖ 27 problems (27 errors, 0 warnings)
   22 errors and 0 warnings potentially fixable with the `--fix` option.
 ```
+
+#### Updating ESLint Configuration to match my code style 
 Seems I've been programming quite against Standard's rules! But I do like semicolons at the end. Also I like 4 spaces
 indentation.
 
@@ -606,6 +620,8 @@ module.exports = {
     .
 };
 ```  
+
+#### Using ESLint to automatically fix different styling
 Now let me see what ESLint can do for me.
 ```shell script
 npx eslint src/components/Keyboard/Key.test.js --fix
@@ -621,6 +637,8 @@ And _voilá_! But it still couldn't fix a lot of things:
 
 ✖ 5 problems (5 errors, 0 warnings)
 ```
+
+#### Preventing ESLint errors for global libraries
 This errors are related to Jest, and according React's test documentation, I shouldn't have to import them since they 
 are magically injected through `src/setupTests.js` (I think). So I'll make ESLint consider it as an environment library 
 updating its config file `.eslintrc.js` again.
@@ -640,7 +658,8 @@ module.exports = {
 };
 ```
 When I run the linter again (`npx eslint src/components/Keyboard/Key.test.js`), almost all errors had vanished. 
-  
+
+#### Polishing my ESLint configurations
 Still, a message similar to the one below may show up in the terminal, it showed up to me.
 ```
 Warning: React version not specified in eslint-plugin-react settings. 
@@ -820,7 +839,7 @@ Humm... No ESLint complains regarding my test, but there is still that one compl
 being declared. 
 
 #### Declaring a typed array property
-Well, it ain't going to, instead I'll declare `keys` as a mandatory one.
+Well, it ain't going to be declared that way anyway, instead I'll declare `keys` as a mandatory one.
 
 ```javascript
 // file: src/components/Keyboard/Keyboard.js
@@ -944,6 +963,30 @@ attribute. Nothing to do to our keyboard's keys though, as for
 > Keys help React identify which items have changed, are added, or are removed. Keys should be given to the elements 
 > inside the array to give the elements a stable identity.
 
-#### Visualizing our new keyboard 
+#### Visualizing our new keyboard
+How may be my keyboard visually after all these changes? Le me check, let me `yarn storybook`.
+
+Blank screen. Didn't expect it to work anyways. Checking the inspector in my browser a see the message `Warning: Failed 
+prop type: The prop 'keys' is marked as required in 'Keyboard', but its value is 'undefined'`. Well, makes sense. The
+Keyboard story must be updated the same way we updated the tests.
+```javascript 1.8
+.
+.
+.
+import Key from '../components/Keyboard/Key';
+.
+.
+.
+export const BasicKeyboard = () => {
+    const keyboardKeys = [
+        <Key key="dk-key-a" value="A" />,
+        <Key key="dk-key-b" value="B" />,
+        <Key key="dk-key-c" value="C" />
+    ];
+
+    return <Keyboard keys={keyboardKeys} />;
+};
+```
+And everything seems to be working now.
 
 **To Be Continued**
