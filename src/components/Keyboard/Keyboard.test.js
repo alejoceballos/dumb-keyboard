@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Keyboard from './Keyboard';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
+import Key from './Key';
 
 describe('Keyboard', () => {
     it('should render without errors', () => {
@@ -10,19 +11,23 @@ describe('Keyboard', () => {
         ReactDOM.render(<Keyboard keys={[]} />, container);
     });
 
-    it.only('should find a simple key', () => {
-        const keyboardLayout = ['A'];
-        const wrapper = shallow(<Keyboard layout={keyboardLayout} />);
+    it('should find a simple key', () => {
+        const keys = [<Key key="dk-key-a" value="A" />];
+        const wrapper = mount(<Keyboard keys={keys} />);
 
-        expect(wrapper.find('[data-qa="key-a"]').text()).toEqual('A');
+        expect(wrapper.find('[data-qa="key-a"]').first().text()).toEqual('A');
     });
 
     it('should accept a dynamic set of keys', () => {
-        const keyboardLayout = ['A', 'B', 'C'];
-        const wrapper = shallow(<Keyboard layout={keyboardLayout} />);
+        const keyboardKeys = [
+            <Key key="dk-key-a" value="A" />,
+            <Key key="dk-key-b" value="B" />,
+            <Key key="dk-key-c" value="C" />
+        ];
+        const wrapper = mount(<Keyboard keys={keyboardKeys} />);
 
-        expect(wrapper.find('[data-qa="key-a"]').text()).toEqual('A');
-        expect(wrapper.find('[data-qa="key-b"]').text()).toEqual('B');
-        expect(wrapper.find('[data-qa="key-c"]').text()).toEqual('C');
+        expect(wrapper.find('[data-qa="key-a"]').first().text()).toEqual('A');
+        expect(wrapper.find('[data-qa="key-b"]').first().text()).toEqual('B');
+        expect(wrapper.find('[data-qa="key-c"]').first().text()).toEqual('C');
     });
 });

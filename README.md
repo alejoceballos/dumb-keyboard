@@ -880,5 +880,70 @@ also a `Method “text” is meant to be run on 1 node. 0 found instead`. Totall
 new (sometimes disliked) approach.
 
 #### Testing the integration between components
+I still want to be able to check the key contained by the keyboard, but using Enzyme's `shallow` function will only
+render the main component and not the ones contained by it. According to Enzyme's 
+[Shallow Rendering API](https://airbnb.io/enzyme/docs/api/shallow.html "Shallow Rendering API") documentation:
+> Shallow rendering is useful to constrain yourself to testing a component as a unit, and to ensure that your tests 
+> aren't indirectly asserting on behavior of child components.
+
+To render inner components, I shall use `mount`, or if you prefer, 
+[Full Rendering API](https://airbnb.io/enzyme/docs/api/mount.html "Full Rendering API").
+> Full DOM rendering is ideal for use cases where you have components that may interact with DOM APIs or need to test 
+> components that are wrapped in higher order components.
+
+```javascript 1.8
+// src/components/Keyboard/Keyboard.test.js
+.
+.
+.
+import { mount } from 'enzyme';
+import Key from './Key';
+
+describe('Keyboard', () => {
+    .
+    .
+    .
+    it('should find a simple key', () => {
+        const keys = [<Key key="dk-key-a" value="A" />];
+        const wrapper = mount(<Keyboard keys={keys} />);
+
+        expect(wrapper.find('[data-qa="key-a"]').first().text()).toEqual('A');
+    });
+
+    it('should accept a dynamic set of keys', () => {
+        const keyboardKeys = [
+            <Key key="dk-key-a" value="A" />,
+            <Key key="dk-key-b" value="B" />,
+            <Key key="dk-key-c" value="C" />
+        ];
+        const wrapper = mount(<Keyboard keys={keyboardKeys} />);
+
+        expect(wrapper.find('[data-qa="key-a"]').first().text()).toEqual('A');
+        expect(wrapper.find('[data-qa="key-b"]').first().text()).toEqual('B');
+        expect(wrapper.find('[data-qa="key-c"]').first().text()).toEqual('C');
+    });
+});
+```
+Note that to be able to find the wrapped key component I had to use the `first()` method or face the following error 
+during test run:
+```
+Method “text” is meant to be run on 1 node. 2 found instead.
+``` 
+It happens because when using styled components it renders our components inside containers using the same attributes,
+therefore, `data-qa="key-a"` would be found in multiple tag elements (perhaps I'll remove styled components and use 
+plain CSS to make it less third-party libraries dependant. I'll see that in the future).
+
+Also note that I've added a `key` attribute with a unique value every time I declared a Key component. Not doing this 
+would cause the following message to start popping up during the tests:
+```
+Warning: Each child in a list should have a unique "key" prop. 
+```
+That's because React expects that any list item of the same components being rendered is uniquely identified by a `key` 
+attribute. Nothing to do to our keyboard's keys though, as for 
+[React documentation](https://reactjs.org/docs/lists-and-keys.html#keys "React documentation"):
+> Keys help React identify which items have changed, are added, or are removed. Keys should be given to the elements 
+> inside the array to give the elements a stable identity.
+
+#### Visualizing our new keyboard 
 
 **To Be Continued**
