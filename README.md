@@ -970,6 +970,7 @@ Blank screen. Didn't expect it to work anyways. Checking the inspector in my bro
 prop type: The prop 'keys' is marked as required in 'Keyboard', but its value is 'undefined'`. Well, makes sense. The
 Keyboard story must be updated the same way we updated the tests.
 ```javascript 1.8
+// src/stories/Keyboard.stories.js
 .
 .
 .
@@ -991,9 +992,10 @@ And everything seems to be working now.
 
 ## Folder restructure
 
-Before going on, I will do a little refactoring on the folder structures for future architectural changes. First I'll
-create a `key` folder under the `Keyboard` folder and move my `Key.js` and `Key.test.js` to it. After that I will rename
-the `Keyboard` folder all to lowercase. The result will be:
+Before going on, I will do a little refactoring on the folder structures for future architectural changes. It could be
+done later, but I'm just in the mood for doing it now. First I'll create a `key` folder under the `Keyboard` folder and 
+move my `Key.js` and `Key.test.js` to it. After that I will rename the `Keyboard` folder all to lowercase. The result 
+will be:
 ```
 ├── components                                                                                          
 │   └── keyboard                                                                                        
@@ -1007,5 +1009,75 @@ the `Keyboard` folder all to lowercase. The result will be:
 #### No need to import the full pathname
 After that I'll create `package.json` files inside each folder. It will be used to simplify my imports without the need
 to fully address the file pathname.
+```json
+// src/components/keyboard/package.json
+
+{
+    "name": "keyboard",
+    "main": "./Keyboard.js"
+}
+```
+```json
+// src/components/keyboard/key/package.json
+
+{
+    "name": "key",
+    "main": "./Key.js"
+}
+```
+And now I update my code.
+```javascript 1.8
+// src/components/keyboard/key/Key.test.js
+.
+.
+.
+import Key from '.';
+.
+.
+.
+```
+```javascript 1.8
+// src/components/keyboard/Keyboard.js
+.
+.
+.
+import Key from './key';
+.
+.
+.
+```
+```javascript 1.8
+// src/components/keyboard/Keyboard.test.js
+.
+.
+.
+import Key from './key';
+import Keyboard from '.';
+.
+.
+.
+```
+```javascript 1.8
+// src/stories/Key.stories.js
+.
+.
+.
+import Key from '../components/keyboard/key';
+.
+.
+.
+```
+```javascript 1.8
+// src/stories/Keyboard.stories.js
+.
+.
+.
+import Keyboard from '../components/keyboard';
+import Key from '../components/keyboard/key';
+.
+.
+.
+```
+Okay, all set. Let me move on.
 
 **To Be Continued**

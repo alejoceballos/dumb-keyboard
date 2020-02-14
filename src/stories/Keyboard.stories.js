@@ -1,6 +1,6 @@
 import React from 'react';
 import Keyboard from '../components/keyboard';
-import Key from '../components/Keyboard/Key';
+import Key from '../components/keyboard/key';
 
 export default {
     title: 'Keyboard',

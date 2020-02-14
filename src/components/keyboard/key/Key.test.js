@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Key from './Key';
 import { shallow } from 'enzyme';
+import Key from '.';
 
 describe('Key', () => {
     it('should render without errors', () => {
