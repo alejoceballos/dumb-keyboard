@@ -1080,4 +1080,84 @@ import Key from '../components/keyboard/key';
 ```
 Okay, all set. Let me move on.
 
+## Special Keys
+
+The keys in the keyboard are currently straight forward. One letter, one value. "A" is an "A", "B" is a "B". But a real
+keyboard has more than simple letters (or numbers) on it, it has keys responsible for special actions! For example, the
+"Enter" key, or the "Shift" key. I call them special keys, but the truth is that they are not that special, they are 
+just a set of keys that are represented as images or words in a keyboard, but they just send a signal from the 
+peripheral device (the keyboard) to some processor that handles this signal, just like any other key. What does it mean?
+That a key sends some value to the processor connected to it through the keyboard, that may be different from the symbol
+that is displayed in the keyboard itself!
+
+Summarizing, a key should actually have two properties, the value to be sent, and the value to be displayed. In other 
+words, I want that a key in my keyboard is able to send a different value from what is being displayed on it.
+
+In terms of a test that means...
+```javascript 1.8
+// src/components/keyboard/key/Key.test.js
+.
+.
+.
+describe('Key', () => {
+    .
+    .
+    .
+    it('should display a different value from the one sent when pressed', () => {
+        const onClickMock = jest.fn();
+        const wrapper = shallow(<Key display="x" value="y" onClick={onClickMock} />);
+
+        wrapper.simulate('click');
+        expect(wrapper.text()).toBe('x');
+        expect(onClickMock).toBeCalledWith('y');
+    });
+});
+```
+I decided to have a new property called `display`. It should be the value visually available when seeing the keyboard
+while the real key value remains defined by the `value` property.
+
+Obviously this test will fail since we didn't implement any other property until now.
+```javascript 1.8
+.
+.
+.
+const Key = ({ value, display, onClick }) => (
+    <StyledButton data-qa={`key-${lowerCase(value)}`} onClick={() => onClick(value)}>
+        {display}
+    </StyledButton>
+);
+
+Key.propTypes = {
+    value: PropTypes.string.isRequired,
+    display: PropTypes.string,
+    onClick: PropTypes.func
+};
+
+Key.defaultProps = {
+    display: '',
+    onClick: () => {}
+};
+
+export default Key;
+```
+So now it displays one value and returns another one when clicked! I also declared it as non required to not force any
+value to be displayed. Actually, I was thinking about a space bar key, it doesn't have anything on it, just a large 
+empty key. I should have a test for that too!
+```javascript 1.8
+// src/components/keyboard/key/Key.test.js
+.
+.
+.
+describe('Key', () => {
+    .
+    .
+    .
+    it('should not enforce anything being displayed on the key', () => {
+        const wrapper = shallow(<Key value="y" />);
+        expect(wrapper.text()).toBe('');
+    });
+});
+```
+Of course that some of our component integration tests will fail, the keyboard one! So let me fix them.
+
 **To Be Continued**

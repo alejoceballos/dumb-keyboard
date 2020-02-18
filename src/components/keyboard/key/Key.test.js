@@ -17,4 +17,18 @@ describe('Key', () => {
         wrapper.simulate('click');
         expect(onClickMock).toBeCalledWith('x');
     });
+
+    it('should display a different value from the one sent when pressed', () => {
+        const onClickMock = jest.fn();
+        const wrapper = shallow(<Key display="x" value="y" onClick={onClickMock} />);
+
+        wrapper.simulate('click');
+        expect(wrapper.text()).toBe('x');
+        expect(onClickMock).toBeCalledWith('y');
+    });
+
+    it('should not enforce anything being displayed on the key', () => {
+        const wrapper = shallow(<Key value="y" />);
+        expect(wrapper.text()).toBe('');
+    });
 });
