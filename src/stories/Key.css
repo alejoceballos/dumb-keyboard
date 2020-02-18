@@ -1,0 +1,26 @@
+.dk-key {
+    background-color: black;
+    border-block-style: solid;
+    border-color: red;
+    border-radius: 3px;
+    border-width: 2px;
+    color: red;
+    font-family: Arial, serif;
+    font-size: larger;
+    height: 32px;
+    margin: 2px;
+    width: 32px;
+}
+
+.dk-key:focus {
+    background: #3a3a3a;
+    border-color: #ff7970;
+    color: #ff7970;
+}
+
+.dk-key:active {
+    background: red;
+    border-color: black;
+    color: black;
+}
+

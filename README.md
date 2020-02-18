@@ -52,6 +52,10 @@ one, specific for the subject being presented.
 10. [Folder restructure](#Folder-restructure "Folder restructure")
     1. [No need to import the full pathname](#No-need-to-import-the-full-pathname "No need to import the full pathname")
 11. [Special Keys](#Special-Keys "Special Keys")
+    1. [Differentiating a key value from what is displays](#Differentiating-a-key-value-from-what-is-displays "Differentiating a key value from what is displays")
+12. [Image keys](#Image-keys "Image keys")
+    1. [Going old school styling](#Going-old-school-styling "Going old school styling")
+    2. [But some keys are different from others](#But-some-keys-are-different-from-others "But some keys are different from others")
 
 ## Creating the application
 
@@ -1193,6 +1197,29 @@ describe('Keyboard', () => {
     });
 });
 ```
+And never forget our beautiful storybook!
+```javascript 1.8
+// src/stories/Key.stories.js
+.
+.
+.
+export const BasicKey = () => <Key display="X" value="x" />;
+```
+```javascript 1.8
+// src/stories/Keyboard.stories.js
+.
+.
+.
+export const BasicKeyboard = () => {
+    const keyboardKeys = [
+        <Key key="dk-key-a" display="A" value="a" />,
+        <Key key="dk-key-b" display="B" value="b" />,
+        <Key key="dk-key-c" display="C" value="c" />
+    ];
+
+    return <Keyboard keys={keyboardKeys} />;
+};
+```
 
 ## Image keys
 
@@ -1205,9 +1232,112 @@ engineer background with little or even no design experience, navigating through
 [Cascade Style Sheet](https://www.w3.org/Style/CSS/Overview.en.html "Cascade Style Sheet") (a.k.a. CSS) can be very 
 disturbing.
 
-But there is a good reason I'll stop using Styled Components in this project, I'm intending to evolve it to a node 
-package possible of installing using `npm` or `yarn` and I want the least third-party dependencies as possible.
+But there is a good reason I'll stop using Styled Components (for now) in this project, I'm intending to evolve it to a 
+node package possible of installing using `npm` or `yarn` and I want the least third-party dependencies as possible.
 
-so let me clean up the code a little bit and go back to class names.
+So let me clean up the code a little bit.
+```javascript 1.8
+// src/components/keyboard/key/Key.js
+
+import React from 'react';
+import { lowerCase } from 'voca';
+import PropTypes from 'prop-types';
+
+const Key = ({ value, display, onClick }) => (
+    <button data-qa={`key-${lowerCase(value)}`} onClick={() => onClick(value)}>
+        {display}
+    </button>
+);
+.
+.
+.
+```
+Checking the storybook again I see my keys falling down to ugliness. But I''l ease my heart. That's not for too long.
+
+According to React's [Styling and CSS](https://reactjs.org/docs/faq-styling.html "Styling and CSS") page, is just a 
+matter of adding a `className` attribute!
+
+**NOTE:** Also in this page, it has some thoughts about 
+[CSS-in-JS](https://reactjs.org/docs/faq-styling.html#what-is-css-in-js "CSS-in-JS") that links to Michele Bertoli's 
+[CSS in JS](https://github.com/MicheleBertoli/css-in-js#css-in-js "CSS in JS") page. Guess who shows up on the list? Our
+previous friend `Styled Components`.
+
+I'll change my key component just a little bit.
+```javascript 1.8
+// src/components/keyboard/key/Key.js
+    .
+    .
+    .
+    <button className="dk-key" data-qa={`key-${lowerCase(value)}`} onClick={() => onClick(value)}>
+        {display}
+    </button>
+    .
+    .
+    .
+```
+What is `dk-key`? Just some CSS class for a dumb keyboard key that must be defined in order to style it. Let's talk 
+storybook here!
+
+First I will create the CSS file based on what I already had implemented before.
+```css
+/* src/stories/Key.css */
+
+.dk-key {
+    background-color: black;
+    border-block-style: solid;
+    border-color: red;
+    border-radius: 3px;
+    border-width: 2px;
+    color: red;
+    font-family: Arial, serif;
+    font-size: larger;
+    height: 32px;
+    margin: 2px;
+    width: 32px;
+}
+
+.dk-key:focus {
+    background: #3a3a3a;
+    border-color: #ff7970;
+    color: #ff7970;
+}
+
+.dk-key:active {
+    background: red;
+    border-color: black;
+    color: black;
+}
+```
+And after that, import it to my story.
+```javascript 1.8
+// src/stories/Key.stories.js
+.
+.
+.
+import './Key.css';
+.
+.
+.
+```
+For some reason I did not have to do the same to `src/stories/Keyboard.stories.js`. Perhaps Storybook sets the CSS file 
+as global once used for the first time. I do not know. In case it didn't work on the Keyboard story, I would just import 
+the file as I did previously.
+
+#### But some keys are different from others
+
+**To Be Continued**
+
+
+## Profiling
+
+**To Be Continued**
+
+#### Why Did it Render
+
+**To Be Continued**
+
+#### Chrome React Profiler
+
+Highlight when a component render  
 
 **To Be Continued**

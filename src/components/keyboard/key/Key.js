@@ -1,38 +1,11 @@
 import React from 'react';
 import { lowerCase } from 'voca';
-import styled from 'styled-components/macro';
 import PropTypes from 'prop-types';
 
-const StyledButton = styled.button`
-    background-color: black;
-    border-block-style: solid;
-    border-color: red;
-    border-radius: 3px;
-    border-width: 2px;
-    color: red;
-    font-family: Arial, serif;
-    font-size: larger;
-    height: 32px;
-    margin: 2px;
-    width: 32px;
-    
-    :focus {
-      background: #3a3a3a;
-      border-color: #ff7970;
-      color: #ff7970;
-    }
-    
-    :active {
-      background: red;
-      border-color: black;
-      color: black;
-    }
-`;
-
 const Key = ({ value, display, onClick }) => (
-    <StyledButton data-qa={`key-${lowerCase(value)}`} onClick={() => onClick(value)}>
+    <button className="dk-key" data-qa={`key-${lowerCase(value)}`} onClick={() => onClick(value)}>
         {display}
-    </StyledButton>
+    </button>
 );
 
 Key.propTypes = {
