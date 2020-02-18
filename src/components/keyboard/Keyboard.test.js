@@ -12,7 +12,7 @@ describe('Keyboard', () => {
     });
 
     it('should find a simple key', () => {
-        const keys = [<Key key="dk-key-a" value="A" />];
+        const keys = [<Key key="dk-key-a" display="A" value="a" />];
         const wrapper = mount(<Keyboard keys={keys} />);
 
         expect(wrapper.find('[data-qa="key-a"]').first().text()).toEqual('A');
@@ -20,9 +20,9 @@ describe('Keyboard', () => {
 
     it('should accept a dynamic set of keys', () => {
         const keyboardKeys = [
-            <Key key="dk-key-a" value="A" />,
-            <Key key="dk-key-b" value="B" />,
-            <Key key="dk-key-c" value="C" />
+            <Key key="dk-key-a" display="A" value="a" />,
+            <Key key="dk-key-b" display="B" value="b" />,
+            <Key key="dk-key-c" display="C" value="c" />
         ];
         const wrapper = mount(<Keyboard keys={keyboardKeys} />);
 

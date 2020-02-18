@@ -49,6 +49,9 @@ one, specific for the subject being presented.
     2. [Declaring a typed array property](#Declaring-a-typed-array-property "Declaring a typed array property")
     3. [Testing the integration between components](#Testing-the-integration-between-components "Testing the integration between components")
     4. [Visualizing our new keyboard](#Visualizing-our-new-keyboard "Visualizing our new keyboard")
+10. [Folder restructure](#Folder-restructure "Folder restructure")
+    1. [No need to import the full pathname](#No-need-to-import-the-full-pathname "No need to import the full pathname")
+11. [Special Keys](#Special-Keys "Special Keys")
 
 ## Creating the application
 
@@ -316,7 +319,7 @@ To help me style my keys (and everything else) I'll use a component based stylin
 [Styled Components](https://styled-components.com/ "Styled Components"). I've been currently using it and although there 
 are plenty other options I have been enjoying this one. There are a set of 
 [motivations](https://styled-components.com/docs/basics#motivation "motivations") in the website that I mostly agree 
-with.
+with. 
 
 **NOTE:** For those using IntelliJ IDEA or any other tool from JetBrains that allows working with React, check 
 [IntelliJ IDEA Tips](README.files/IntelliJ-IDEA-tips.md#Styled-Components-Plugin "IntelliJ IDEA Tips") for a cool plugin 
@@ -1090,6 +1093,7 @@ peripheral device (the keyboard) to some processor that handles this signal, jus
 That a key sends some value to the processor connected to it through the keyboard, that may be different from the symbol
 that is displayed in the keyboard itself!
 
+#### Differentiating a key value from what is displays
 Summarizing, a key should actually have two properties, the value to be sent, and the value to be displayed. In other 
 words, I want that a key in my keyboard is able to send a different value from what is being displayed on it.
 
@@ -1158,6 +1162,52 @@ describe('Key', () => {
     });
 });
 ```
-Of course that some of our component integration tests will fail, the keyboard one! So let me fix them.
+Of course that some of our component integration tests has failed, the keyboard one! So let me fix them.
+```javascript 1.8
+// src/components/keyboard/Keyboard.test.js
+.
+.
+.
+describe('Keyboard', () => {
+    .
+    .
+    .
+    it('should find a simple key', () => {
+        const keys = [<Key key="dk-key-a" display="A" value="a" />];
+        const wrapper = mount(<Keyboard keys={keys} />);
+
+        expect(wrapper.find('[data-qa="key-a"]').first().text()).toEqual('A');
+    });
+
+    it('should accept a dynamic set of keys', () => {
+        const keyboardKeys = [
+            <Key key="dk-key-a" display="A" value="a" />,
+            <Key key="dk-key-b" display="B" value="b" />,
+            <Key key="dk-key-c" display="C" value="c" />
+        ];
+        const wrapper = mount(<Keyboard keys={keyboardKeys} />);
+
+        expect(wrapper.find('[data-qa="key-a"]').first().text()).toEqual('A');
+        expect(wrapper.find('[data-qa="key-b"]').first().text()).toEqual('B');
+        expect(wrapper.find('[data-qa="key-c"]').first().text()).toEqual('C');
+    });
+});
+```
+
+## Image keys
+
+Now that I have a key that can represent a value different from what it is displayed, is time to be able to put images
+instead of letters or texts on my keys.
+
+#### Going old school styling
+I really like [Styled Components](https://styled-components.com/ "Styled Components"). Coming from a strong software
+engineer background with little or even no design experience, navigating through the tempest seas of 
+[Cascade Style Sheet](https://www.w3.org/Style/CSS/Overview.en.html "Cascade Style Sheet") (a.k.a. CSS) can be very 
+disturbing.
+
+But there is a good reason I'll stop using Styled Components in this project, I'm intending to evolve it to a node 
+package possible of installing using `npm` or `yarn` and I want the least third-party dependencies as possible.
+
+so let me clean up the code a little bit and go back to class names.
 
 **To Be Continued**
