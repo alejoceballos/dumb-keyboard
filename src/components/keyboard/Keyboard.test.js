@@ -15,7 +15,7 @@ describe('Keyboard', () => {
         const keys = [<Key key="dk-key-a" display="A" value="a" />];
         const wrapper = mount(<Keyboard keys={keys} />);
 
-        expect(wrapper.find('[data-qa="key-a"]').first().text()).toEqual('A');
+        expect(wrapper.find('[data-qa="dk-key-a"]').first().text()).toEqual('A');
     });
 
     it('should accept a dynamic set of keys', () => {
@@ -26,8 +26,8 @@ describe('Keyboard', () => {
         ];
         const wrapper = mount(<Keyboard keys={keyboardKeys} />);
 
-        expect(wrapper.find('[data-qa="key-a"]').first().text()).toEqual('A');
-        expect(wrapper.find('[data-qa="key-b"]').first().text()).toEqual('B');
-        expect(wrapper.find('[data-qa="key-c"]').first().text()).toEqual('C');
+        expect(wrapper.find('[data-qa="dk-key-a"]').first().text()).toEqual('A');
+        expect(wrapper.find('[data-qa="dk-key-b"]').first().text()).toEqual('B');
+        expect(wrapper.find('[data-qa="dk-key-c"]').first().text()).toEqual('C');
     });
 });

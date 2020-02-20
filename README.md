@@ -52,7 +52,7 @@ one, specific for the subject being presented.
 10. [Folder restructure](#Folder-restructure "Folder restructure")
     1. [No need to import the full pathname](#No-need-to-import-the-full-pathname "No need to import the full pathname")
 11. [Special Keys](#Special-Keys "Special Keys")
-    1. [Differentiating a key value from what is displays](#Differentiating-a-key-value-from-what-is-displays "Differentiating a key value from what is displays")
+    1. [Differentiating a key value from what is displayed](#Differentiating-a-key-value-from-what-is-displayed "Differentiating a key value from what is displayed")
 12. [Image keys](#Image-keys "Image keys")
     1. [Going old school styling](#Going-old-school-styling "Going old school styling")
     2. [But some keys are different from others](#But-some-keys-are-different-from-others "But some keys are different from others")
@@ -1097,7 +1097,7 @@ peripheral device (the keyboard) to some processor that handles this signal, jus
 That a key sends some value to the processor connected to it through the keyboard, that may be different from the symbol
 that is displayed in the keyboard itself!
 
-#### Differentiating a key value from what is displays
+#### Differentiating a key value from what is displayed
 Summarizing, a key should actually have two properties, the value to be sent, and the value to be displayed. In other 
 words, I want that a key in my keyboard is able to send a different value from what is being displayed on it.
 
@@ -1252,7 +1252,7 @@ const Key = ({ value, display, onClick }) => (
 .
 .
 ```
-Checking the storybook again I see my keys falling down to ugliness. But I''l ease my heart. That's not for too long.
+Checking the storybook again I see my keys falling down to ugliness. But I'll ease my heart. That's not for too long.
 
 According to React's [Styling and CSS](https://reactjs.org/docs/faq-styling.html "Styling and CSS") page, is just a 
 matter of adding a `className` attribute!
@@ -1324,9 +1324,105 @@ as global once used for the first time. I do not know. In case it didn't work on
 the file as I did previously.
 
 #### But some keys are different from others
+I'm now able to declare any style for my keys just setting my `dk-key` CSS class. The only thing that should be 
+considered is that if I change the style, I'll change all keys at once! So I'm gonna create another CSS class 
+placeholder that may overwrite the previous settings, but for a particular key.
+```javascript 1.8
+// src/components/keyboard/key/Key.js
+
+import React from 'react';
+import PropTypes from 'prop-types';
+
+const Key = ({ value, display, onClick }) => {
+    const keyIdentifier = `dk-key-${value ? value.toLowerCase() : 'NO-VALUE'}`;
+    return (
+        <button className={`dk-key ${keyIdentifier}`} data-qa={keyIdentifier} onClick={() => onClick(value)}>
+            {display}
+        </button>
+    );
+};
+.
+.
+.
+```
+I've changed a couple of things here:
+1. I got rid of the `voca` import since I want to make my keyboard less dependant of third-party packages;
+2. I've changed the `data-qa` value so it relates to my component even more. Of course some tests will break;
+3. the `className` now accepts CSS class overload;
+
+For the first point, note that now I had to make a validation in case `value` is not defined. But how could it 
+happen if it is declared as `required` in the `PropTypes`? Well, I guess (but haven't confirmed yet) that Enzyme's 
+`mount` function performs a set of component instantiation with no properties (can't guess why though). Without `voca` 
+preventing unwanted `undefined` errors to be raised, I have to perform the validations myself.
+
+For the second point, let me fix the tests.
+```javascript 1.8
+// src/components/keyboard/Keyboard.test.js
+.
+.
+.
+describe('Keyboard', () => {
+    .
+    .
+    .
+    it('should find a simple key', () => {
+        const keys = [<Key key="dk-key-a" display="A" value="a" />];
+        const wrapper = mount(<Keyboard keys={keys} />);
+
+        expect(wrapper.find('[data-qa="dk-key-a"]').first().text()).toEqual('A');
+    });
+
+    it('should accept a dynamic set of keys', () => {
+        const keyboardKeys = [
+            <Key key="dk-key-a" display="A" value="a" />,
+            <Key key="dk-key-b" display="B" value="b" />,
+            <Key key="dk-key-c" display="C" value="c" />
+        ];
+        const wrapper = mount(<Keyboard keys={keyboardKeys} />);
+
+        expect(wrapper.find('[data-qa="dk-key-a"]').first().text()).toEqual('A');
+        expect(wrapper.find('[data-qa="dk-key-b"]').first().text()).toEqual('B');
+        expect(wrapper.find('[data-qa="dk-key-c"]').first().text()).toEqual('C');
+    });
+});
+```
+The third point is a new CSS class name that allows changing the style of a single key by defining its specific CSS 
+class. For example, let's take the keyboard story. It has 3 keys, they will render just like that:
+```html
+<div>
+    <button class="dk-key dk-key-a" data-qa="dk-key-a">A</button>
+    <button class="dk-key dk-key-b" data-qa="dk-key-b">B</button>
+    <button class="dk-key dk-key-c" data-qa="dk-key-c">C</button>
+</div>
+```  
+If I want to change only B's style, I could do the following:
+```css
+// src/stories/Key.css
+.
+.
+.
+.dk-key-b {
+    border-color: lightgreen;
+    color: lightgreen;
+}
+
+.dk-key-b:focus {
+    background: #3a3a3a;
+    border-color: white;
+    color: white;
+}
+
+.dk-key-b:active {
+    background: lightgreen;
+    border-color: black;
+    color: black;
+}
+```
+Check the storybook now! We got a different greener key among the red ones!
+
+#### What about the image key?
 
 **To Be Continued**
-
 
 ## Profiling
 

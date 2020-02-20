@@ -24,3 +24,19 @@
     color: black;
 }
 
+.dk-key-b {
+    border-color: lightgreen;
+    color: lightgreen;
+}
+
+.dk-key-b:focus {
+    background: #3a3a3a;
+    border-color: white;
+    color: white;
+}
+
+.dk-key-b:active {
+    background: lightgreen;
+    border-color: black;
+    color: black;
+}
