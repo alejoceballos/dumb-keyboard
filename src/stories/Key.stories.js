@@ -8,3 +8,5 @@ export default {
 };
 
 export const BasicKey = () => <Key display="X" value="x" />;
+
+export const TabKey = () => <Key display="." value="tab" />;

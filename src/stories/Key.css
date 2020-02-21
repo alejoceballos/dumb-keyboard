@@ -13,13 +13,13 @@
 }
 
 .dk-key:focus {
-    background: #3a3a3a;
+    background-color: #3a3a3a;
     border-color: #ff7970;
     color: #ff7970;
 }
 
 .dk-key:active {
-    background: red;
+    background-color: red;
     border-color: black;
     color: black;
 }
@@ -30,13 +30,24 @@
 }
 
 .dk-key-b:focus {
-    background: #3a3a3a;
+    background-color: #3a3a3a;
     border-color: white;
     color: white;
 }
 
 .dk-key-b:active {
-    background: lightgreen;
+    background-color: lightgreen;
     border-color: black;
     color: black;
+}
+
+.dk-key-tab {
+    background-color: white;
+    background-image: url(tab.svg);
+}
+
+.dk-key-tab:focus {
+    background-color: lightgray;
+    border-color: #ff7970;
+    color: red;
 }

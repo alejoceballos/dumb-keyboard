@@ -53,9 +53,8 @@ one, specific for the subject being presented.
     1. [No need to import the full pathname](#No-need-to-import-the-full-pathname "No need to import the full pathname")
 11. [Special Keys](#Special-Keys "Special Keys")
     1. [Differentiating a key value from what is displayed](#Differentiating-a-key-value-from-what-is-displayed "Differentiating a key value from what is displayed")
-12. [Image keys](#Image-keys "Image keys")
-    1. [Going old school styling](#Going-old-school-styling "Going old school styling")
-    2. [But some keys are different from others](#But-some-keys-are-different-from-others "But some keys are different from others")
+    2. [Going old school styling](#Going-old-school-styling "Going old school styling")
+    3. [But some keys are different from others](#But-some-keys-are-different-from-others "But some keys are different from others")
 
 ## Creating the application
 
@@ -471,6 +470,9 @@ export default Key;
 React's `button` component inherited from the styled component created allows using the `onClick` event. It is the 
 corresponding `onclick` event from HTML's button. Both properties are being destructured as function parameters and the 
 event the key being pressed is being returned using an anonymous arrow function in the `onClick` event.
+
+**NOTE:** I am not putting too much validation o the `value` property, like it being empty string, white space or a strange
+character. I may do it later.
 
 ## Properties Validation
 
@@ -1220,9 +1222,6 @@ export const BasicKeyboard = () => {
     return <Keyboard keys={keyboardKeys} />;
 };
 ```
-
-## Image keys
-
 Now that I have a key that can represent a value different from what it is displayed, is time to be able to put images
 instead of letters or texts on my keys.
 
@@ -1420,7 +1419,17 @@ If I want to change only B's style, I could do the following:
 ```
 Check the storybook now! We got a different greener key among the red ones!
 
-#### What about the image key?
+There is a lot that can be done to make it more dynamic. For example I could set a new property to the key that allows 
+setting CSS classes dynamically in case naming conventions are an issue or there is need for more overloading.
+
+#### Image Keys
+
+I'll use CSS to set images to my keys instead of simple characters. I'll visit 
+[Flaticon](https://www.flaticon.com/ "Flaticon") and grab a "tab" image in the [SVG](https://www.w3.org/TR/SVG2/ "SVG") 
+format.
+
+**NOTE:** For copyright reasons, be aware that the author of these images is 
+[Google](https://www.flaticon.com/authors/google "Google").
 
 **To Be Continued**
 
