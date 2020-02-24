@@ -47,3 +47,17 @@
     background-size: 60%;
     background-position: center;
 }
+
+.dk-key-bike svg {
+    fill: red;
+    width: 120%;
+    height: 100%;
+}
+
+.dk-key-bike:focus svg {
+    fill: #ff7970;
+}
+
+.dk-key-bike:active svg {
+    fill: black;
+}

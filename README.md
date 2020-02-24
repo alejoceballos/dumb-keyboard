@@ -1462,7 +1462,66 @@ Ok, it looks better, but I'm still disliking it. I have only one image and three
 time editing and painting images to fit my design system style. Setting the background image seemed quite easy at the 
 beginning, but I found it very limiting. Let me try another approach. 
 
-#### Setting and handling images as children
+#### Using inline SVG as a child component
+Just researching a little bit I found another approach that can be much more helpful in this wonderful 
+[CSS Tricks](https://css-tricks.com/change-color-of-svg-on-hover/#article-header-id-0 "CSS Tricks") page. I'll try to
+use inline SVG images!
+
+I'll grab the same bike image from this page and create a React component...
+```javascript 1.8
+// src/stories/Images.js
+
+import React from 'react';
+
+const BikeImage = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24">
+        <path d="M5,20.5A3.5,3.5 0 0,1 1.5,17A3.5,3.5 0 0,1 5,13.5A3.5,3.5 0 0,1 8.5,17A3.5,3.5 0 0,1 5,20.5M5,12A5,5 0 0,0 0,17A5,5 0 0,0 5,22A5,5 0 0,0 10,17A5,5 0 0,0 5,12M14.8,10H19V8.2H15.8L13.86,4.93C13.57,4.43 13,4.1 12.4,4.1C11.93,4.1 11.5,4.29 11.2,4.6L7.5,8.29C7.19,8.6 7,9 7,9.5C7,10.13 7.33,10.66 7.85,10.97L11.2,13V18H13V11.5L10.75,9.85L13.07,7.5M19,20.5A3.5,3.5 0 0,1 15.5,17A3.5,3.5 0 0,1 19,13.5A3.5,3.5 0 0,1 22.5,17A3.5,3.5 0 0,1 19,20.5M19,12A5,5 0 0,0 14,17A5,5 0 0,0 19,22A5,5 0 0,0 24,17A5,5 0 0,0 19,12M16,4.8C17,4.8 17.8,4 17.8,3C17.8,2 17,1.2 16,1.2C15,1.2 14.2,2 14.2,3C14.2,4 15,4.8 16,4.8Z"></path>
+    </svg>
+);
+
+export { BikeImage };
+``` 
+... Create another story for this "bike" key...
+```javascript 1.8
+// src/stories/Key.stories.js
+.
+.
+.
+import { BikeImage } from './Images';
+.
+.
+.
+export const BikeKey = () => (
+    <Key value="bike">
+        <BikeImage />
+    </Key>
+);
+```
+... And finally add some CSS to style it.
+```css
+.
+.
+.
+.dk-key-bike svg {
+    fill: red;
+    width: 120%;
+    height: 100%;
+}
+
+.dk-key-bike:focus svg {
+    fill: #ff7970;
+}
+
+.dk-key-bike:active svg {
+    fill: black;
+}
+```
+Much more interesting.
+
+![Bike key with no focus](README.files/bike-key-nofocus.png "Bike key with no focus")
+![Bike key when clicked](README.files/bike-key-on-click.png "Bike key when clicked")
+![Bike key on focus](README.files/bike-key-on-focus.png "Bike key on focus")
+
 
 **To Be Continued**
 
