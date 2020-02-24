@@ -1123,36 +1123,32 @@ describe('Key', () => {
     });
 });
 ```
-I decided to have a new property called `display`. It should be the value visually available when seeing the keyboard
-while the real key value remains defined by the `value` property.
+I decided to have use the `children` property from avery React component. It should be the value visually available when 
+seeing the keyboard while the real key value remains defined by the `value` property.
 
-Obviously this test will fail since we didn't implement any other property until now.
+Obviously this test will fail since I didn't handle the `children` property until now.
 ```javascript 1.8
 .
 .
 .
-const Key = ({ value, display, onClick }) => (
-    <StyledButton data-qa={`key-${lowerCase(value)}`} onClick={() => onClick(value)}>
-        {display}
-    </StyledButton>
+const Key = ({ value, onClick, children }) => (
+  <StyledButton data-qa={`key-${lowerCase(value)}`} onClick={() => onClick(value)}>
+      {children || ''}
+  </StyledButton>
 );
 
 Key.propTypes = {
     value: PropTypes.string.isRequired,
-    display: PropTypes.string,
+    children: PropTypes.node,
     onClick: PropTypes.func
 };
-
-Key.defaultProps = {
-    display: '',
-    onClick: () => {}
-};
-
-export default Key;
+.
+.
+.
 ```
-So now it displays one value and returns another one when clicked! I also declared it as non required to not force any
-value to be displayed. Actually, I was thinking about a space bar key, it doesn't have anything on it, just a large 
-empty key. I should have a test for that too!
+So now it displays one value and returns another one when clicked! I also declared `children` as non required to don't 
+force any value to be displayed. Actually, I was thinking about a space bar key, it doesn't have anything on it, just a 
+large empty key. I should have a test for that too!
 ```javascript 1.8
 // src/components/keyboard/key/Key.test.js
 .
@@ -1168,7 +1164,7 @@ describe('Key', () => {
     });
 });
 ```
-Of course that some of our component integration tests has failed, the keyboard one! So let me fix them.
+Of course that some of our component integration tests have failed, the keyboard one! So let me fix them.
 ```javascript 1.8
 // src/components/keyboard/Keyboard.test.js
 .
@@ -1179,7 +1175,7 @@ describe('Keyboard', () => {
     .
     .
     it('should find a simple key', () => {
-        const keys = [<Key key="dk-key-a" display="A" value="a" />];
+        const keys = [<Key key="dk-key-a" value="a">A</Key>];
         const wrapper = mount(<Keyboard keys={keys} />);
 
         expect(wrapper.find('[data-qa="key-a"]').first().text()).toEqual('A');
@@ -1187,9 +1183,9 @@ describe('Keyboard', () => {
 
     it('should accept a dynamic set of keys', () => {
         const keyboardKeys = [
-            <Key key="dk-key-a" display="A" value="a" />,
-            <Key key="dk-key-b" display="B" value="b" />,
-            <Key key="dk-key-c" display="C" value="c" />
+            <Key key="dk-key-a" value="a">A</Key>,
+            <Key key="dk-key-b" value="b">B</Key>,
+            <Key key="dk-key-c" value="c">C</Key>
         ];
         const wrapper = mount(<Keyboard keys={keyboardKeys} />);
 
@@ -1197,7 +1193,6 @@ describe('Keyboard', () => {
         expect(wrapper.find('[data-qa="key-b"]').first().text()).toEqual('B');
         expect(wrapper.find('[data-qa="key-c"]').first().text()).toEqual('C');
     });
-});
 ```
 And never forget our beautiful storybook!
 ```javascript 1.8
@@ -1205,7 +1200,7 @@ And never forget our beautiful storybook!
 .
 .
 .
-export const BasicKey = () => <Key display="X" value="x" />;
+export const BasicKey = () => <Key value="x">X</Key>;
 ```
 ```javascript 1.8
 // src/stories/Keyboard.stories.js
@@ -1214,16 +1209,16 @@ export const BasicKey = () => <Key display="X" value="x" />;
 .
 export const BasicKeyboard = () => {
     const keyboardKeys = [
-        <Key key="dk-key-a" display="A" value="a" />,
-        <Key key="dk-key-b" display="B" value="b" />,
-        <Key key="dk-key-c" display="C" value="c" />
+        <Key key="dk-key-a" value="a">A</Key>,
+        <Key key="dk-key-b" value="b">B</Key>,
+        <Key key="dk-key-c" value="c">C</Key>
     ];
 
     return <Keyboard keys={keyboardKeys} />;
 };
 ```
-Now that I have a key that can represent a value different from what it is displayed, is time to be able to put images
-instead of letters or texts on my keys.
+Now that I have a key that can represent a value different from what it is displayed, it is time to be able to put 
+images instead of letters or texts on my keys.
 
 #### Going old school styling
 I really like [Styled Components](https://styled-components.com/ "Styled Components"). Coming from a strong software
@@ -1242,9 +1237,9 @@ import React from 'react';
 import { lowerCase } from 'voca';
 import PropTypes from 'prop-types';
 
-const Key = ({ value, display, onClick }) => (
+const Key = ({ value, onClick, children }) => (
     <button data-qa={`key-${lowerCase(value)}`} onClick={() => onClick(value)}>
-        {display}
+        {children || ''}
     </button>
 );
 .
@@ -1268,7 +1263,7 @@ I'll change my key component just a little bit.
     .
     .
     <button className="dk-key" data-qa={`key-${lowerCase(value)}`} onClick={() => onClick(value)}>
-        {display}
+        {children || ''}
     </button>
     .
     .
@@ -1332,11 +1327,11 @@ placeholder that may overwrite the previous settings, but for a particular key.
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Key = ({ value, display, onClick }) => {
+const Key = ({ value, onClick, children }) => {
     const keyIdentifier = `dk-key-${value ? value.toLowerCase() : 'NO-VALUE'}`;
     return (
         <button className={`dk-key ${keyIdentifier}`} data-qa={keyIdentifier} onClick={() => onClick(value)}>
-            {display}
+            {children || ''}
         </button>
     );
 };
@@ -1365,7 +1360,7 @@ describe('Keyboard', () => {
     .
     .
     it('should find a simple key', () => {
-        const keys = [<Key key="dk-key-a" display="A" value="a" />];
+        const keys = [<Key key="dk-key-a" value="a">A</Key>];
         const wrapper = mount(<Keyboard keys={keys} />);
 
         expect(wrapper.find('[data-qa="dk-key-a"]').first().text()).toEqual('A');
@@ -1373,9 +1368,9 @@ describe('Keyboard', () => {
 
     it('should accept a dynamic set of keys', () => {
         const keyboardKeys = [
-            <Key key="dk-key-a" display="A" value="a" />,
-            <Key key="dk-key-b" display="B" value="b" />,
-            <Key key="dk-key-c" display="C" value="c" />
+            <Key key="dk-key-a" value="a">A</Key>,
+            <Key key="dk-key-b" value="b">B</Key>,
+            <Key key="dk-key-c" value="c">C</Key>
         ];
         const wrapper = mount(<Keyboard keys={keyboardKeys} />);
 
@@ -1420,7 +1415,8 @@ If I want to change only B's style, I could do the following:
 Check the storybook now! We got a different greener key among the red ones!
 
 There is a lot that can be done to make it more dynamic. For example I could set a new property to the key that allows 
-setting CSS classes dynamically in case naming conventions are an issue or there is need for more overloading.
+setting CSS classes dynamically in case naming conventions are an issue or there is need for more overloading. Perhaps
+later I'll do it, but now, I want some images!
 
 #### Image Keys
 
@@ -1430,6 +1426,43 @@ format.
 
 **NOTE:** For copyright reasons, be aware that the author of these images is 
 [Google](https://www.flaticon.com/authors/google "Google").
+```css
+// src/stories/Key.css
+.
+.
+.
+.dk-key-tab {
+    background-image: url(tab.svg);
+}
+```
+Let me be honest, I didn't like it. 
+
+##### Tab key with no focus
+![Tab key with no focus](README.files/tab-key-no-focus.png "Tab key with no focus")
+##### Tab key when clicked
+![Tab key when clicked](README.files/tab-key-on-click.png "Tab key when clicked")
+##### Tab key on focus
+![Tab key on focus](README.files/tab-key-on-focus.png "Tab key on focus")
+
+The image is too big for the key! Let me fix it a little bit.
+```css
+// src/stories/Key.css
+.
+.
+.
+.dk-key-tab {
+    background-repeat: no-repeat;
+    background-image: url(tab.svg);
+    background-size: 60%;
+    background-position: center;
+}
+```
+Ok, it looks better, but I'm still disliking it. I have only one image and three key states, "normal", "clicked", and 
+"focused". I would need to have an image with different color for each state, and I do not really want to loose too much 
+time editing and painting images to fit my design system style. Setting the background image seemed quite easy at the 
+beginning, but I found it very limiting. Let me try another approach. 
+
+#### Setting and handling images as children
 
 **To Be Continued**
 

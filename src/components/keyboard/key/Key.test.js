@@ -20,7 +20,7 @@ describe('Key', () => {
 
     it('should display a different value from the one sent when pressed', () => {
         const onClickMock = jest.fn();
-        const wrapper = shallow(<Key display="x" value="y" onClick={onClickMock} />);
+        const wrapper = shallow(<Key value="y" onClick={onClickMock}>x</Key>);
 
         wrapper.simulate('click');
         expect(wrapper.text()).toBe('x');

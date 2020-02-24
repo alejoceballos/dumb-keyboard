@@ -42,12 +42,8 @@
 }
 
 .dk-key-tab {
-    background-color: white;
+    background-repeat: no-repeat;
     background-image: url(tab.svg);
-}
-
-.dk-key-tab:focus {
-    background-color: lightgray;
-    border-color: #ff7970;
-    color: red;
+    background-size: 60%;
+    background-position: center;
 }

@@ -1,23 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Key = ({ value, display, onClick }) => {
+const Key = ({ value, onClick, children }) => {
     const keyIdentifier = `dk-key-${value ? value.toLowerCase() : 'NO-VALUE'}`;
     return (
         <button className={`dk-key ${keyIdentifier}`} data-qa={keyIdentifier} onClick={() => onClick(value)}>
-            {display}
+            {children || ''}
         </button>
     );
 };
 
 Key.propTypes = {
     value: PropTypes.string.isRequired,
-    display: PropTypes.string,
+    children: PropTypes.node,
     onClick: PropTypes.func
 };
 
 Key.defaultProps = {
-    display: '',
     onClick: () => {}
 };
 

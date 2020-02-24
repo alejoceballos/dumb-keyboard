@@ -7,6 +7,6 @@ export default {
     component: Key
 };
 
-export const BasicKey = () => <Key display="X" value="x" />;
+export const BasicKey = () => <Key value="x">X</Key>;
 
-export const TabKey = () => <Key display="." value="tab" />;
+export const TabKey = () => <Key value="tab" />;
