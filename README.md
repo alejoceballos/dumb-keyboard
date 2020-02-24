@@ -1426,6 +1426,16 @@ format.
 
 **NOTE:** For copyright reasons, be aware that the author of these images is 
 [Google](https://www.flaticon.com/authors/google "Google").
+```javascript 1.8
+// src/stories/Key.stories.js
+.
+.
+.
+export const TabKey = () => <Key value="tab" />;
+.
+.
+.
+```
 ```css
 // src/stories/Key.css
 .
@@ -1434,6 +1444,9 @@ format.
 .dk-key-tab {
     background-image: url(tab.svg);
 }
+```
+```javascript 1.8
+
 ```
 Let me be honest, I didn't like it. 
 
@@ -1522,6 +1535,126 @@ Much more interesting.
 ![Bike key when clicked](README.files/bike-key-on-click.png "Bike key when clicked")
 ![Bike key on focus](README.files/bike-key-on-focus.png "Bike key on focus")
 
+#### Tab Key with inline SVG
+So... What about my Tab key? Well, if I open the `tab.svg` file in any text editor (worked using IntelliJ IDEA and 
+[Sublime](https://www.sublimetext.com/ "Sublime")), that's what we will be able to see:
+```xml
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 448 448" style="enable-background:new 0 0 448 448;" xml:space="preserve">
+<g>
+	<g>
+		<g>
+			<polygon points="225.813,126.187 302.293,202.667 0,202.667 0,245.333 302.293,245.333 225.813,321.813 256,352 384,224 256,96 
+							"/>
+			<rect x="405.333" y="96" width="42.667" height="256"/>
+		</g>
+	</g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+</svg>
+```
+Weird, huh? But if I grab only what I need from this large xml data (created by the Google team! Never forget! So I 
+don't get arrested for not attributing the author) and create a component wrapping it...
+```javascript 1.8
+// src/stories/Images.js
+.
+.
+.
+const TabImage = () => (
+    <svg x="0px" y="0px" viewBox="0 0 448 448">
+        <g>
+            <g>
+                <g>
+                    <polygon points="225.813,126.187 302.293,202.667 0,202.667 0,245.333 302.293,245.333 225.813,321.813 256,352 384,224 256,96"/>
+                    <rect x="405.333" y="96" width="42.667" height="256"/>
+                </g>
+            </g>
+        </g>
+    </svg>
+);
+
+export {
+    .
+    .
+    .
+    TabImage
+};
+```
+... Also creating a new story for this specific image...
+```javascript 1.8
+.
+.
+.
+import { BikeImage, TabImage } from './Images';
+.
+.
+.
+export const TabKeyWithEmbeddedSvgImage = () => (
+    <Key value="tabV2">
+        <TabImage />
+    </Key>
+);
+.
+.
+.
+```
+... And a style for it...
+```css
+.dk-key-tabv2 svg {
+    fill: red;
+    width: 120%;
+    height: 100%;
+}
+
+.dk-key-tabv2:focus svg {
+    fill: #ff7970;
+}
+
+.dk-key-tabv2:active svg {
+    fill: black;
+}
+```
+... Then "voilá"!!!
+
+![Tab key version 2 with no focus](README.files/tab-key-v2-no-focus.png "Tab key version 2 with no focus")
+![Tab key version 2 when clicked](README.files/tab-key-v2-on-click.png "Tab key version 2 when clicked")
+![Tab key version 2 focused](README.files/tab-key-v2-on-focus.png "Tab key version 2 focused")
+
+Much, much better.
+
+There will always be other ways to add images to my keys and change them according to user's action. Also, CSS can be 
+improved, but for now I'll stay put. Let me move to the next topic.
 
 **To Be Continued**
 

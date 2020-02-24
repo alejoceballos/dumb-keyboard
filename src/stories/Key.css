@@ -61,3 +61,17 @@
 .dk-key-bike:active svg {
     fill: black;
 }
+
+.dk-key-tabv2 svg {
+    fill: red;
+    width: 120%;
+    height: 100%;
+}
+
+.dk-key-tabv2:focus svg {
+    fill: #ff7970;
+}
+
+.dk-key-tabv2:active svg {
+    fill: black;
+}

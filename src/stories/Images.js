@@ -6,4 +6,19 @@ const BikeImage = () => (
     </svg>
 );
 
-export { BikeImage };
+const TabImage = () => (
+    <svg x="0px" y="0px" viewBox="0 0 448 448">
+        <g>
+            <g>
+                <g>
+                    <polygon points="225.813,126.187 302.293,202.667 0,202.667 0,245.333 302.293,245.333 225.813,321.813 256,352 384,224 256,96"/>
+                    <rect x="405.333" y="96" width="42.667" height="256"/>
+                </g>
+            </g>
+        </g>
+    </svg>
+);
+export {
+    BikeImage,
+    TabImage
+};
