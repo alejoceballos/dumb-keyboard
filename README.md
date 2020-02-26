@@ -69,6 +69,9 @@ npx create-react-app dumb-keyboard
 
 ## TDDing
 
+I'm trying to do this thing correctly, so let me test first, like good 
+[TDD](https://en.wikipedia.org/wiki/Test-driven_development "TDD").
+
 #### Failing the most basic test
 I'm using the bundled test framework that comes with React when using the `create-react-app` command, 
 [Jest](https://jestjs.io/ "Jest"). It comes with the usual `describe`/`it` syntax found in other frameworks lie `mocha` 
@@ -1656,6 +1659,277 @@ Much, much better.
 There will always be other ways to add images to my keys and change them according to user's action. Also, CSS can be 
 improved, but for now I'll stay put. Let me move to the next topic.
 
+## A Calculator Machine
+
+It is time to try to give a real layout to my keyboard. Note that a keyboard is just a set of keys receiving clicks and
+sending signals to the device connected to it. Our keyboard will remain "dumb", but at the end we will have a complete 
+calculator component. Actually, the calculator component is the one that must know what to do when receiving signals
+from the keyboard. 
+
+I'll work on the layout now, something like the _Casio HS8VA Solar Powered Pocket Calculator_ that I randomly found on 
+a google search for "calculator machine" images, being sold at 
+[this Target site](https://www.target.com/p/casio-hs8va-solar-powered-pocket-calculator-silver/-/A-16945587 "Target Site")
+for $3.99 (at the time of this writing).
+
+![Casio HS8VA Solar Powered Pocket Calculator](README.files/Casio-HS8VA-Solar-Powered-Pocket-Calculator.png "Casio HS8VA Solar Powered Pocket Calculator")
+
+I just picked up the simpler one I could find and I'm gonna make it even simpler. Something like the sketch below.  
+```
+┌───────┬───┬───┐
+│   C   │ % │ ÷ │
+├───┬───┼───┼───┤
+│ 7 │ 8 │ 9 │ x │
+├───┼───┼───┼───┤
+│ 4 │ 5 │ 6 │ - │
+├───┼───┼───┼───┤
+│ 1 │ 2 │ 3 │   │
+├───┼───┼───┤ + │
+│ 0 │ . │ = │   │
+└───┴───┴───┴───┘
+```
+#### The Calculator component
+So, what should a calculator component really do? Perform basic arithmetic operations. Let's start with a simple sum of 
+basic numbers, 1 + 1 = 2.
+
+I need to press the "1", then the "+", then the "1" again, and at last, press the "=" once to check the result 
+somewhere.
+```javascript 1.8
+// src/components/CalculatorMachine/CalculatorMachine.test.js
+
+import React from 'react';
+import { mount } from 'enzyme';
+import CalculatorMachine from './CalculatorMachine';
+
+describe('Calculator Machine', () => {
+    it('should sum two numbers', () => {
+        const calculator = mount(<CalculatorMachine />);
+        calculator.find('[data-qa="dk-key-1"]').simulate('click');
+        calculator.find('[data-qa="dk-key-+"]').simulate('click');
+        calculator.find('[data-qa="dk-key-1"]').simulate('click');
+        calculator.find('[data-qa="dk-key-="]').simulate('click');
+
+        expect(calculator.find('[data-qa="result-display"]').text()).toBe('2');
+    });
+});
+```
+It fails in so many ways, but first of all, because of the lack of existence of a calculator machine component itself!
+```javascript 1.8
+// src/components/CalculatorMachine/CalculatorMachine.js
+
+import React from 'react';
+
+const CalculatorMachine = () => <div>I am a calculator machine</div>;
+
+export default CalculatorMachine;
+```
+Now that we have the base component, there is no key number one here. Let's change it. Let's add the keyboard.
+```javascript 1.8
+// src/components/CalculatorMachine/CalculatorMachine.js
+
+import React from 'react';
+import Keyboard from '../keyboard';
+import Key from '../keyboard/key';
+
+const keys = [
+    <Key key="calc-key-1" value="1">1</Key>
+];
+
+const CalculatorMachine = () => (
+    <Keyboard keys={keys} />
+);
+
+export default CalculatorMachine;
+```
+Well, now it is complaining about the "add" key, I also know it will complaint about the "equals" key.
+```javascript 1.8
+// src/components/CalculatorMachine/CalculatorMachine.js
+.
+.
+.
+const keys = [
+    <Key key="calc-key-1" value="1">1</Key>,
+    <Key key="calc-key-add" value="+">+</Key>,
+    <Key key="calc-key-equals" value="=">=</Key>
+];
+.
+.
+.
+```
+All right, now there is no display to show the results. Let's start with a simple read only one.
+```javascript 1.8
+// src/components/CalculatorMachine/CalculatorMachine.js
+.
+.
+.
+const CalculatorMachine = () => (
+    <>
+        <span data-qa="result-display"></span>
+        <Keyboard keys={keys} />
+    </>
+);
+.
+.
+.
+```
+The only thing left is the calculation itself!
+
+#### Making the test pass with a basic calculation
+Before anything else, I understand that the output of clicking keys on the keyboard will be numbers and operations
+until I finally click "equals" (=). So I need some code that transform all my numbers and operations into a real 
+calculation.
+
+Let's make this test pass in a very simple and basic way (well, perhaps not that simple). I must store numbers and 
+operations in order to sum the values of the keys being clicked, but there is no way in my current implementation to get 
+it from the keyboard, only from the keys. 
+
+As a first step, I'll put my keys array inside my component, it can cause an unnecessary re render of all keys every 
+time the calculator component needs re rendering, but I can "memoize" all keys later using 
+[React.memo](https://reactjs.org/docs/react-api.html#reactmemo "React.memo").
+```javascript 1.8
+// src/components/CalculatorMachine/CalculatorMachine.js
+.
+.
+.
+const CalculatorMachine = () => {
+    const keys = [
+        <Key key="calc-key-1" value="1">1</Key>,
+        <Key key="calc-key-add" value="+">+</Key>,
+        <Key key="calc-key-equals" value="=">=</Key>
+    ];
+
+    return (
+        .
+        .
+        .
+    );
+};
+.
+.
+.
+```
+Then I need to be able to get the value of each key when pressed.
+```javascript 1.8
+// src/components/CalculatorMachine/CalculatorMachine.js
+.
+.
+.
+const CalculatorMachine = () => {
+    const handleEquation = keyValue => {
+        // I'll do something here, just wait
+    };
+
+    const keys = [
+        <Key key="calc-key-1" value="1" onClick={handleEquation}>1</Key>,
+        <Key key="calc-key-add" value="+" onClick={handleEquation}>+</Key>,
+        <Key key="calc-key-equals" value="=" onClick={handleEquation}>=</Key>
+    ];
+    .
+    .
+    .
+};
+.
+.
+.
+```
+And I must be able to store this values, concatenating to form the whole equation.
+```javascript 1.8
+// src/components/CalculatorMachine/CalculatorMachine.js
+
+import React, { useState } from 'react';
+.
+.
+.
+const CalculatorMachine = () => {
+    const [equation, setEquation] = useState('');
+    .
+    .
+    .
+};
+.
+.
+.
+```
+I've used the [State Hook](https://reactjs.org/docs/hooks-state.html "State Hook") to store values, turning the 
+component into a stateful one. As a last effort, I must provide some logic to store the equation and to calculate its 
+value.
+```javascript 1.8
+// src/components/CalculatorMachine/CalculatorMachine.js
+.
+.
+.
+const CalculatorMachine = () => {
+    .
+    .
+    .
+    const handleEquation = keyValue => {
+        if (keyValue !== '=') {
+            setEquation(`${equation}${keyValue}`);
+        } else {
+            setEquation(`${eval(equation)}`);
+        }
+    };
+    .
+    .
+    .
+};
+.
+.
+.
+```
+And I need to display the result!
+```javascript 1.8
+.
+.
+.
+const CalculatorMachine = () => {
+    .
+    .
+    .
+    return (
+        <>
+            <span data-qa="result-display">{equation}</span>
+            <Keyboard keys={keys} />
+        </>
+    );
+};
+.
+.
+.
+```
+The test has passed! Wouldn't it be perfect, if not for a little detail? I occasionally run my linter, so I noticed a 
+small warning there.
+```
+\dumb-keyboard\src\components\CalculatorMachine\CalculatorMachine.js
+  12:28  error  eval can be harmful  no-eval
+
+✖ 1 problem (1 error, 0 warnings)
+```
+Using `eval` is a bad practice! I'll have to find another way to perform my calculation.
+
+**To Be Continued**
+
+#### Going deeper
+
+1. Receive a set of signals from a keyboard, concatenate this symbols if they are just numbers;
+2. If an operation signal is received (+, -, x, ÷, and %) a new number will be typed next. Typing a different operation
+one after the other, only the last one must be considered; 
+3. Apply some calculation if the signal is "equals to" (=);
+4. Reset it all if the signal is "Clear" (C);
+5. If the signal is simply a "dot" (.), concatenate to the current number being stored to turn it into a floating point 
+only if it wasn't turned into one already;
+6. Operations like multiplication and division have precedence from addition and subtraction;
+
+
+#### Working on the keyboard grid layout
+**To Be Continued**
+
+#### Fitting the different keys on the layout
+**To Be Continued**
+
+#### Using images for the operation keys
+**To Be Continued**
+
+#### Attaching the keyboard to a display
 **To Be Continued**
 
 ## Profiling
@@ -1663,11 +1937,9 @@ improved, but for now I'll stay put. Let me move to the next topic.
 **To Be Continued**
 
 #### Why Did it Render
-
 **To Be Continued**
 
 #### Chrome React Profiler
-
 Highlight when a component render  
 
 **To Be Continued**
