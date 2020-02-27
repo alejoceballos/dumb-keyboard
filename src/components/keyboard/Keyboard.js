@@ -1,7 +1,7 @@
 import React from 'react';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
-import Key from './key';
+import Key from './key/Key';
 
 const Keyboard = ({ keys }) => <div>{map(keys, key => key)}</div>;
 

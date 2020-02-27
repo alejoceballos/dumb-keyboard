@@ -50,7 +50,7 @@ one, specific for the subject being presented.
     3. [Testing the integration between components](#Testing-the-integration-between-components "Testing the integration between components")
     4. [Visualizing our new keyboard](#Visualizing-our-new-keyboard "Visualizing our new keyboard")
 10. [Folder restructure](#Folder-restructure "Folder restructure")
-    1. [No need to import the full pathname](#No-need-to-import-the-full-pathname "No need to import the full pathname")
+    1. [Not using package.json inside each folder](#not-using-packagejson-inside-each-folder "Not using package.json inside each folder")
 11. [Special Keys](#Special-Keys "Special Keys")
     1. [Differentiating a key value from what is displayed](#Differentiating-a-key-value-from-what-is-displayed "Differentiating a key value from what is displayed")
     2. [Going old school styling](#Going-old-school-styling "Going old school styling")
@@ -78,7 +78,7 @@ I'm using the bundled test framework that comes with React when using the `creat
 and `jasmine`.
 
 Creat a file under `src/components/Keyboard` named `Keyboard.test.js`.
-```javascript
+```javascript 1.8
 // file: src/components/Keyboard/Keyboard.test.js
 
 import React from "react";
@@ -412,7 +412,7 @@ testing, and for the sake of not repeating these things, let me create the basic
 
 import React from "react";
 import ReactDOM from "react-dom";
-import Key from "./Key";
+import Key from './Key';
 import { shallow } from "enzyme";
 
 describe("Key", () => {
@@ -747,6 +747,7 @@ in Key (at Key.test.js:10)
 It is complaining about _Key_ being declared with no "value" property properly set. To fix it just add the value 
 attribute to our rendering test.
 ```javascript 1.8
+// src/components/Keyboard/Key.test.js
 .
 .
 .
@@ -1018,79 +1019,24 @@ will be:
 │           └── Key.test.js                                                                             
 ```  
 
-#### No need to import the full pathname
-After that I'll create `package.json` files inside each folder. It will be used to simplify my imports without the need
-to fully address the file pathname.
-```json
-// src/components/keyboard/package.json
+#### Not using package.json inside each folder
+Usually I find more interesting creating a `package.json` file inside each component folder. It could be used to 
+simplify my imports without the need to fully address the file pathname.
 
+Unfortunately, for some reason that I wasn't able to sort out, IntelliJ IDEA stops detecting some tests inside such 
+folders if their naming goes too different from the files that they hold. For example, under a (future) 
+`calculator-machine` folder with a `package.json` like the one below...
+```json
 {
-    "name": "keyboard",
-    "main": "./Keyboard.js"
+    "name": "calculator-machine",
+    "main": "./CalculatorMachine.js"
 }
 ```
-```json
-// src/components/keyboard/key/package.json
+... The test `CalculatorMachine.test.json` could not be found. It works just fine if I use `yarn test` in the command 
+line, but it becomes impossible for debugging using the IDE. So I gave up using it for now.
 
-{
-    "name": "key",
-    "main": "./Key.js"
-}
-```
-And now I update my code.
-```javascript 1.8
-// src/components/keyboard/key/Key.test.js
-.
-.
-.
-import Key from '.';
-.
-.
-.
-```
-```javascript 1.8
-// src/components/keyboard/Keyboard.js
-.
-.
-.
-import Key from './key';
-.
-.
-.
-```
-```javascript 1.8
-// src/components/keyboard/Keyboard.test.js
-.
-.
-.
-import Key from './key';
-import Keyboard from '.';
-.
-.
-.
-```
-```javascript 1.8
-// src/stories/Key.stories.js
-.
-.
-.
-import Key from '../components/keyboard/key';
-.
-.
-.
-```
-```javascript 1.8
-// src/stories/Keyboard.stories.js
-.
-.
-.
-import Keyboard from '../components/keyboard';
-import Key from '../components/keyboard/key';
-.
-.
-.
-```
-Okay, all set. Let me move on.
+**NOTE:** I could also name the main component of the folder `index.js` and it would work the same. Didn't make the test
+if IntelliJ detects mys test files though. I'm just not fond of this format I guess. 
 
 ## Special Keys
 
@@ -1448,10 +1394,7 @@ export const TabKey = () => <Key value="tab" />;
     background-image: url(tab.svg);
 }
 ```
-```javascript 1.8
-
-```
-Let me be honest, I didn't like it. 
+Let me be honest, I didn't like the result. 
 
 ##### Tab key with no focus
 ![Tab key with no focus](README.files/tab-key-no-focus.png "Tab key with no focus")
@@ -1905,6 +1848,11 @@ small warning there.
 ✖ 1 problem (1 error, 0 warnings)
 ```
 Using `eval` is a bad practice! I'll have to find another way to perform my calculation.
+
+#### Separating Business and Presentation
+I need a more sophisticated way to make my calculations. But of course this may be improved as my calculator machine
+becomes more complex, and I don't want to keep mixing my mathematical solutions with my visual components, so let me
+apply some separation of concerns. 
 
 **To Be Continued**
 

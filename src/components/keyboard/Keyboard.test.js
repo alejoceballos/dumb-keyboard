@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { mount } from 'enzyme';
-import Key from './key';
-import Keyboard from '.';
+import Key from './key/Key';
+import Keyboard from './Keyboard';
 
 describe('Keyboard', () => {
     it('should render without errors', () => {

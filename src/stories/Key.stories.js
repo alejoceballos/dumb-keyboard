@@ -1,5 +1,5 @@
 import React from 'react';
-import Key from '../components/keyboard/key';
+import Key from '../components/keyboard/key/Key';
 import './Key.css';
 import { BikeImage, TabImage } from './Images';
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Keyboard from '../keyboard';
-import Key from '../keyboard/key';
+import Keyboard from '../keyboard/Keyboard';
+import Key from '../keyboard/key/Key';
 
 const CalculatorMachine = () => {
     const [equation, setEquation] = useState('');
