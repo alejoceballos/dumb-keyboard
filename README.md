@@ -17,7 +17,7 @@ To follow this dream, I decided to start from scratch. Like I've never implement
 my favorite [Single Page Application](https://en.wikipedia.org/wiki/Single-page_application "Single Page Application") 
 framework! Also, I'm using [ECMAScript 6](http://es6-features.org/ "ECMAScript 6") syntax (ES6).
 
-Let's try to make dreams reality! 
+Let me try to make my dreams reality! 
 
 **NOTE:** For those using [IntelliJ IDEA](https://www.jetbrains.com/idea/ "IntelliJ IDEA") or any other tool from 
 JetBrains that allows working with React, I add some settings that personally I find useful for development purposes, 
@@ -138,13 +138,13 @@ To ease my work, I'll work with [Enzyme](https://airbnb.io/enzyme/ "Enzyme"). Fr
 [installation guide](https://airbnb.io/enzyme/docs/installation/ "Installation Guide"), I'll install the version to be 
 used with React 16 (or above?).
 
-But since we are using Yarn:
+But since I'm using Yarn:
 ```shell script
 yarn add --dev enzyme
 yarn add --dev enzyme-adapter-react-16
 ```
-Let's configure [src/setupTests.js](https://create-react-app.dev/docs/running-tests/#srcsetuptestsjs "setupTests.js") 
-file to be able to test using Enzyme. Also, since we are using ES6, let's use the snippet below.
+Let me configure [src/setupTests.js](https://create-react-app.dev/docs/running-tests/#srcsetuptestsjs "setupTests.js") 
+file to be able to test using Enzyme. Also, since I'm using ES6, let me use the snippet below.
 ```javascript 1.8
 // file: src/setupTests.js
 
@@ -153,7 +153,7 @@ import Adapter from 'enzyme-adapter-react-16';
 
 configure({ adapter: new Adapter() });
 ```
-Now let's add some test cases using enzyme capabilities.
+Now I add some test cases using enzyme capabilities.
 ```javascript 1.8
 // file: src/components/Keyboard/Keyboard.test.js
 
@@ -172,7 +172,7 @@ describe("Keyboard", () => {
   });
 });
 ```
-As expected, it will fail. Let's fix it.
+As expected, it will fail. Let me fix it.
 ```javascript 1.8
 // file: src/components/Keyboard/Keyboard.js
 
@@ -186,9 +186,9 @@ const Keyboard = () => (
 
 export default Keyboard;
 ```
-That's simple and it really ain't a Keyboard, actually. Let's make it more dynamic so it can accept different keys.
+That's simple and it really ain't a Keyboard, actually. I'm gonna make it more dynamic so it can accept different keys.
 
-Let's add a set of different keys to the keyboard. 
+Let me add a set of different keys to the keyboard. 
 ```javascript 1.8
 // file: src/components/Keyboard/Keyboard.test.js
 .
@@ -270,7 +270,7 @@ render a key. Let me pass a simple layout with only "A" key to make it pass agai
   .
   .
 ```
-Now it is all okay! Let's check how is our Keyboard being displayed! But I do not want to be able to check it in a 
+Now it is all okay! I'll check how is our Keyboard being displayed! But I do not want to be able to check it in a 
 running application, it is a simple component that currently does nothing and must not be integrated. Storybooks to the 
 rescue!
 
@@ -299,8 +299,8 @@ yarn storybook
 ``` 
 The default Story Book can be seen by typing <http://localhost:9009> on your browser.
 
-Now we can create a story for our component and check how it will be displayed in our application. Create a new 
-file named `Keyboard.stories.js` named `src/stories`.
+Now I can create a story for my component and check how it will be displayed in our application. Create a new file named 
+`Keyboard.stories.js` named `src/stories`.
 ```javascript 1.8
 import React from 'react';
 import Keyboard from "../components/Keyboard/Keyboard";
@@ -313,9 +313,9 @@ export default {
 export const Basic = () => <Keyboard layout={['A', 'B', 'C']} />;
 ``` 
 It will create a story in the storybook named `Basic` under the `Keyboard` left menu. May not seem a big deal, but now 
-we can decorate our keys with CSS and see how they will look like! 
+I can decorate our keys with CSS and see how they will look like! 
 
-Checking the Story Book, the one we have just created must be something similar to this:
+Checking the Story Book, the one I have just created must be something similar to this:
 
 ![First Keyboard Look](README.files/first-storybook-keyboard.png "First Keyboard Look")
 
@@ -331,7 +331,7 @@ with.
 [IntelliJ IDEA Tips](README.files/IntelliJ-IDEA-tips.md#Styled-Components-Plugin "IntelliJ IDEA Tips") for a cool plugin 
 that adds support to Styled Components.
 
-So, let's install it! 
+So, let me install it! 
 ```shell script
 yarn add styled-components
 ```
@@ -345,7 +345,7 @@ like this:
 
 ![Changing Key Style in the Browser](README.files/changing-key-style-on-browser.png "Changing Key Style in the Browser")
 
-Not the best CSS, I know, but I'm just trying to see how it would look like in real time. We can refactor it later.
+Not the best CSS, I know, but I'm just trying to see how it would look like in real time. I can refactor it later.
 
 Updating our keyboard using styled components would like just like that:
 ```javascript 1.8
@@ -431,7 +431,7 @@ describe("Key", () => {
   });
 });
 ```
-I am using the `shallow` function from `enzyme` again. Since **Key** is a generic component now, we must inform which 
+I am using the `shallow` function from `enzyme` again. Since **Key** is a generic component now, I must inform which 
 key is being rendered and somehow retrieve that it was pressed. This will be achieved by passing a function to our 
 "onClick" event. This function will be called by passing the key's value as argument. Jest and enzyme allows me to 
 simulate a click on the Key component and check what happened to the function passed as "click" event. 
@@ -546,7 +546,7 @@ myself and check if it works.
 #### Setting Up ESLint
 I'll start by setting up the default configuration file with JavaScript and React standards.
 
-**NOTE:** Do not select to install dependencies automatically, we will install them later.
+**NOTE:** I do not select to install dependencies automatically, I will install them later.
 ```shell script
 npx eslint --init
 ```
@@ -981,7 +981,7 @@ How may be my keyboard visually after all these changes? Le me check, let me `ya
 
 Blank screen. Didn't expect it to work anyways. Checking the inspector in my browser a see the message `Warning: Failed 
 prop type: The prop 'keys' is marked as required in 'Keyboard', but its value is 'undefined'`. Well, makes sense. The
-Keyboard story must be updated the same way we updated the tests.
+Keyboard story must be updated the same way I updated the tests.
 ```javascript 1.8
 // src/stories/Keyboard.stories.js
 .
@@ -1361,7 +1361,7 @@ If I want to change only B's style, I could do the following:
     color: black;
 }
 ```
-Check the storybook now! We got a different greener key among the red ones!
+Check the storybook now! I got a different greener key among the red ones!
 
 There is a lot that can be done to make it more dynamic. For example I could set a new property to the key that allows 
 setting CSS classes dynamically in case naming conventions are an issue or there is need for more overloading. Perhaps
@@ -1483,7 +1483,7 @@ Much more interesting.
 
 #### Tab Key with inline SVG
 So... What about my Tab key? Well, if I open the `tab.svg` file in any text editor (worked using IntelliJ IDEA and 
-[Sublime](https://www.sublimetext.com/ "Sublime")), that's what we will be able to see:
+[Sublime](https://www.sublimetext.com/ "Sublime")), that's what I'm be able to see:
 ```xml
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
@@ -1605,7 +1605,7 @@ improved, but for now I'll stay put. Let me move to the next topic.
 ## A Calculator Machine
 
 It is time to try to give a real layout to my keyboard. Note that a keyboard is just a set of keys receiving clicks and
-sending signals to the device connected to it. Our keyboard will remain "dumb", but at the end we will have a complete 
+sending signals to the device connected to it. Our keyboard will remain "dumb", but at the end I will have a complete 
 calculator component. Actually, the calculator component is the one that must know what to do when receiving signals
 from the keyboard. 
 
@@ -1631,7 +1631,7 @@ I just picked up the simpler one I could find and I'm gonna make it even simpler
 └───┴───┴───┴───┘
 ```
 #### The Calculator component
-So, what should a calculator component really do? Perform basic arithmetic operations. Let's start with a simple sum of 
+So, what should a calculator component really do? Perform basic arithmetic operations. Let me start with a simple sum of 
 basic numbers, 1 + 1 = 2.
 
 I need to press the "1", then the "+", then the "1" again, and at last, press the "=" once to check the result 
@@ -1665,7 +1665,7 @@ const CalculatorMachine = () => <div>I am a calculator machine</div>;
 
 export default CalculatorMachine;
 ```
-Now that we have the base component, there is no key number one here. Let's change it. Let's add the keyboard.
+Now that I have the base component, there is no key number one here. Let me change it. Let me add the keyboard.
 ```javascript 1.8
 // src/components/CalculatorMachine/CalculatorMachine.js
 
@@ -1698,7 +1698,7 @@ const keys = [
 .
 .
 ```
-All right, now there is no display to show the results. Let's start with a simple read only one.
+All right, now there is no display to show the results. Let me start with a simple read only one.
 ```javascript 1.8
 // src/components/CalculatorMachine/CalculatorMachine.js
 .
@@ -1721,7 +1721,7 @@ Before anything else, I understand that the output of clicking keys on the keybo
 until I finally click "equals" (=). So I need some code that transform all my numbers and operations into a real 
 calculation.
 
-Let's make this test pass in a very simple and basic way (well, perhaps not that simple). I must store numbers and 
+I'll make this test pass in a very simple and basic way (well, perhaps not that simple). I must store numbers and 
 operations in order to sum the values of the keys being clicked, but there is no way in my current implementation to get 
 it from the keyboard, only from the keys. 
 
@@ -1850,9 +1850,67 @@ small warning there.
 Using `eval` is a bad practice! I'll have to find another way to perform my calculation.
 
 #### Separating Business and Presentation
-I need a more sophisticated way to make my calculations. But of course this may be improved as my calculator machine
-becomes more complex, and I don't want to keep mixing my mathematical solutions with my visual components, so let me
-apply some separation of concerns. 
+I need a more sophisticated way to make my calculations. I don't want to keep mixing my mathematical solutions with my 
+visual components, so let me apply some separation of concerns. And of course this may be improved as my calculator 
+machine becomes more complex.
+
+In fact, I'm facing two different problems: 1) create a valid equation structure by accumulating numbers and operations 
+in order to 2) be able to apply a calculation over these values obtaining a real result.
+
+#### Accumulating key presses
+Each key press must be processed. By processing I mean validated and added to the equation. Let me start wth some tests.
+```javascript 1.8
+// src/services/Calculator.service.test.js
+
+describe('Calculator Service', () => {
+    describe('Equation', () => {
+        it('should display numbers and operations accumulated', () => {
+            const equation = append(1)(SUM)(1);
+            expect(display(equation)).toBe('1 + 1');
+        });
+    });
+});
+```
+I created a `Calculator.service.test.js` meaning I am expecting to have a `Calculator.service.js` in the near future. 
+My first test is checking the numbers and operations accumulator that I thought would be nice to name it `equation`. 
+Also while thinking about what I was testing I decided that I need two initial functions, `append` to accumulate
+my numbers and operations and `display`, to be able to visualize it. Any internal structure is being overlooked
+to focus on the results.
+
+I really wanted to make my `append` function "curry like". So I'll try to achieve it without using any external library
+(I also wouldn't really know how to use correctly, I guess).
+
+Anyway, it was a long path until I reach to the result below. Always remember, "work in progress"!
+```javascript 1.8
+// src/services/Calculator.service.js
+
+export const OPERATIONS = {
+    SUM: '+'
+};
+
+const COMMANDS = {
+    DISPLAY: '__DiSPlAy__'
+};
+
+const appendToEquation = (symbol, equation) => {
+    const equationToAppend = Array.isArray(equation) ? [...equation, symbol] : [symbol];
+    return (nextSymbol) => nextSymbol === COMMANDS.DISPLAY
+        ? equationToAppend.join(' ')
+        : appendToEquation(nextSymbol, equationToAppend);
+};
+
+const displayEquation = fn => fn(COMMANDS.DISPLAY);
+
+export const Equation = {
+    append: appendToEquation,
+    display: displayEquation
+};
+```
+I'm not going to spend time validating my symbol parameter checking if it is a number, a digit separator or a valid 
+operation. Perhaps later.
+
+This is a really simple equation. There are much more complex ones, but before entering the world of floating points I 
+want to get the reason I came for, calculating the result!
 
 **To Be Continued**
 
