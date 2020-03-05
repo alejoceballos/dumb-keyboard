@@ -1906,11 +1906,11 @@ export const Equation = {
     display: displayEquation
 };
 ```
-I'm not going to spend time validating my symbol parameter checking if it is a number, a digit separator or a valid 
-operation. Perhaps later.
+I'm not going to spend time now validating my symbol parameter checking if it is a number, a digit separator or a valid 
+operation.
 
 This is a really simple equation. There are much more complex ones, but before entering the world of floating points I 
-want to get the reason I came for, calculating the result!
+want to get the reason I came for, seeing and calculating the result!
 
 **To Be Continued**
 
