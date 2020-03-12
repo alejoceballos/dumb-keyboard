@@ -1873,7 +1873,7 @@ describe('Calculator Service', () => {
 ```
 I created a `Calculator.service.test.js` meaning I am expecting to have a `Calculator.service.js` in the near future. 
 My first test is checking the numbers and operations accumulator that I thought would be nice to name it `equation`. 
-Also while thinking about what I was testing I decided that I need two initial functions, `append` to accumulate
+Also while thinking about what I was testing I decided that I needed two initial functions, `append` to accumulate
 my numbers and operations and `display`, to be able to visualize it. Any internal structure is being overlooked
 to focus on the results.
 
@@ -1912,6 +1912,99 @@ operation.
 This is a really simple equation. There are much more complex ones, but before entering the world of floating points I 
 want to get the reason I came for, seeing and calculating the result!
 
+```javascript 1.8
+import { equation, display, OPERATIONS } from './Calculator.service';
+
+const { SUM, EQUALS } = OPERATIONS;
+
+describe('Calculator Service', () => {
+    .
+    .
+    .
+    describe('Calculate', () => {
+        it('should calculate a very simple sum', () => {
+            const eq = equation(1)(SUM)(2)(EQUALS);
+            expect(display(eq)).toBe('3');
+        });
+    });
+});
+```
+So some things are different and let me explain why... It was kindda weird that to have an equation I started calling
+something named "append". Append from what? So I preferred to rename it to its real meaning, an equation function that
+builds an equation.
+
+Another thing is the apparition of an `EQUALS` operation. First of all, "equals" is not an operation, but I didn't want
+to create another structure just for it. I'll change it later when I get more creative. The idea is to make it just like 
+I was typing the keys and sending commands to the machine. Anyway, to perform a very simple calculation, instead of 
+creating a new "calculate" function like the "display" one, I decided to add the "equals" sign and then call "display."
+
+So, how would my calculator service look like?
+```javascript 1.8
+const COMMANDS = {
+    DISPLAY: '__DiSPlAy__'
+};
+
+export const OPERATIONS = {
+    SUM: '+',
+    EQUALS: '='
+};
+
+const calculate = equation => equation.reduce((sum, current, index, equation) => {
+    if (current === OPERATIONS.SUM) {
+        return sum + Number(equation[index + 1]);
+    }
+
+    return sum;
+});
+
+const appendToEquation = (symbol, equation = []) => {
+    const equationToAppend = symbol === OPERATIONS.EQUALS ? [calculate(equation)] : [...equation, symbol];
+
+    return symbol => symbol === COMMANDS.DISPLAY
+        ? equationToAppend.join(' ')
+        : appendToEquation(symbol, equationToAppend);
+};
+
+export const equation = symbol => appendToEquation(symbol);
+
+export const display = fn => fn(COMMANDS.DISPLAY);
+```
+Besides refactoring my append function, splitting it in two, "equation" and "appendToEquation", I'm only checking if the 
+symbol is "equals" and calculating it, substituting the whole equation for the result. I can also make a more complex 
+test, like calculating the sum of more than two numbers in the equation, among other things. Let me also refactor my 
+test to get it ready for evolution!
+```javascript 1.8
+import { equation, display, OPERATIONS } from './Calculator.service';
+
+const { SUM, EQUALS } = OPERATIONS;
+
+describe('Calculator Service', () => {
+    describe('Display', () => {
+        it('should display a very simple sum', () => {
+            const eq = equation(1)(SUM)(2);
+            expect(display(eq)).toBe('1 + 2');
+        });
+
+        it('should display a sum with 3 numbers', () => {
+            const eq = equation(1)(SUM)(2)(SUM)(3);
+            expect(display(eq)).toBe('1 + 2 + 3');
+        });
+    });
+
+    describe('Calculate', () => {
+        it('should calculate a very simple sum', () => {
+            const eq = equation(1)(SUM)(2)(EQUALS);
+            expect(display(eq)).toBe('3');
+        });
+
+        it('should calculate a two results sum', () => {
+            const eq = equation(1)(SUM)(2)(EQUALS)(SUM)(3)(EQUALS);
+            expect(display(eq)).toBe('6');
+        });
+    });
+});
+```
+ 
 **To Be Continued**
 
 #### Going deeper
