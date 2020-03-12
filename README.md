@@ -55,6 +55,16 @@ one, specific for the subject being presented.
     1. [Differentiating a key value from what is displayed](#Differentiating-a-key-value-from-what-is-displayed "Differentiating a key value from what is displayed")
     2. [Going old school styling](#Going-old-school-styling "Going old school styling")
     3. [But some keys are different from others](#But-some-keys-are-different-from-others "But some keys are different from others")
+    4. [Image Keys](#Image-Keys "Image Keys")
+    5. [Using inline SVG as a child component](#Using-inline-SVG-as-a-child-component "Using inline SVG as a child component")
+    6. [Tab Key with inline SVG](#Tab-Key-with-inline-SVG "Tab Key with inline SVG")
+12. [A Calculator Machine](#A-Calculator-Machine "A Calculator Machine")
+    1. [The Calculator component](#The-Calculator-component "The Calculator component")
+    2. [Making the test pass with a basic calculation](#Making-the-test-pass-with-a-basic-calculation "Making the test pass with a basic calculation")
+    3. [Separating Business and Presentation](#Separating-Business-and-Presentation "Separating Business and Presentation")
+    4. [Preparing to accumulate key presses](#Preparing-to-accumulate-key-presses "Preparing to accumulate key presses")
+    5. [Implementing all four operations](#Implementing-all-four-operations "Implementing all four operations")
+    6. [Accumulating key presses](#Accumulating-key-presses "Accumulating key presses")
 
 ## Creating the application
 
@@ -1857,7 +1867,7 @@ machine becomes more complex.
 In fact, I'm facing two different problems: 1) create a valid equation structure by accumulating numbers and operations 
 in order to 2) be able to apply a calculation over these values obtaining a real result.
 
-#### Accumulating key presses
+#### Preparing to accumulate key presses
 Each key press must be processed. By processing I mean validated and added to the equation. Let me start wth some tests.
 ```javascript 1.8
 // src/services/Calculator.service.test.js
@@ -1970,9 +1980,12 @@ export const equation = symbol => appendToEquation(symbol);
 export const display = fn => fn(COMMANDS.DISPLAY);
 ```
 Besides refactoring my append function, splitting it in two, "equation" and "appendToEquation", I'm only checking if the 
-symbol is "equals" and calculating it, substituting the whole equation for the result. I can also make a more complex 
-test, like calculating the sum of more than two numbers in the equation, among other things. Let me also refactor my 
-test to get it ready for evolution!
+symbol is "equals" and calculating it, substituting the whole equation for the result. Note that the `appendToEquation`
+function is not exported, so the only possible usage is through the `equation` function that doesn't accept a second 
+parameter forcing starting the equation with an empty list.
+
+I can also make a more complex test, like calculating the sum of more than two numbers in the equation, among other 
+things. Let me also refactor my test to get it ready for evolution!
 ```javascript 1.8
 import { equation, display, OPERATIONS } from './Calculator.service';
 
@@ -2004,7 +2017,70 @@ describe('Calculator Service', () => {
     });
 });
 ```
- 
+Nice! Let me add other operators!
+
+#### Implementing all four operations
+```javascript 1.8
+.
+.
+.
+const { SUM, SUBTRACT, MULTIPLY, DIVIDE, EQUALS } = OPERATIONS;
+
+describe('Calculator Service', () => {
+    describe('Display', () => {
+        .
+        .
+        .
+        it('should display an equation with all possible basic operations', () => {
+            const eq = equation(1)(SUM)(2)(MULTIPLY)(3)(SUBTRACT)(4)(DIVIDE)(5);
+            expect(display(eq)).toBe('1 + 2 x 3 - 4 ÷ 5');
+        });
+    });
+
+    describe('Calculate', () => {
+        .
+        .
+        .
+        it('should calculate an equation with all possible basic operations', () => {
+            const eq = equation(1)(SUM)(2)(MULTIPLY)(3)(SUBTRACT)(4)(DIVIDE)(5)(EQUALS);
+            expect(display(eq)).toBe('1');
+        });
+    });
+});
+```
+```javascript 1.8
+.
+.
+.
+export const OPERATIONS = {
+    SUM: '+',
+    SUBTRACT: '-',
+    MULTIPLY: 'x',
+    DIVIDE: '÷',
+    EQUALS: '='
+};
+
+const calculate = equation => equation.reduce((result, current, index, equation) => {
+    const { SUM, SUBTRACT, MULTIPLY, DIVIDE } = OPERATIONS;
+
+    switch (current) {
+    case SUM: return result + Number(equation[index + 1]);
+    case SUBTRACT: return result - Number(equation[index + 1]);
+    case MULTIPLY: return result * Number(equation[index + 1]);
+    case DIVIDE: return result / Number(equation[index + 1]);
+    }
+
+    return result;
+});
+.
+.
+.
+```
+Now I have a real calculator that can perform calculations, but... Only with inputs from 0 to 9! I gotta fix this later
+allowing that successive numbers are concatenated as one, but before I do that, let me go back to my UI!
+
+#### Accumulating key presses
+
 **To Be Continued**
 
 #### Going deeper

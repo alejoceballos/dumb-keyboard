@@ -4,15 +4,23 @@ const COMMANDS = {
 
 export const OPERATIONS = {
     SUM: '+',
+    SUBTRACT: '-',
+    MULTIPLY: 'x',
+    DIVIDE: '÷',
     EQUALS: '='
 };
 
-const calculate = equation => equation.reduce((sum, current, index, equation) => {
-    if (current === OPERATIONS.SUM) {
-        return sum + Number(equation[index + 1]);
+const calculate = equation => equation.reduce((result, current, index, equation) => {
+    const { SUM, SUBTRACT, MULTIPLY, DIVIDE } = OPERATIONS;
+
+    switch (current) {
+    case SUM: return result + Number(equation[index + 1]);
+    case SUBTRACT: return result - Number(equation[index + 1]);
+    case MULTIPLY: return result * Number(equation[index + 1]);
+    case DIVIDE: return result / Number(equation[index + 1]);
     }
 
-    return sum;
+    return result;
 });
 
 const appendToEquation = (symbol, equation = []) => {
