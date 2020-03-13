@@ -1868,7 +1868,8 @@ In fact, I'm facing two different problems: 1) create a valid equation structure
 in order to 2) be able to apply a calculation over these values obtaining a real result.
 
 #### Preparing to accumulate key presses
-Each key press must be processed. By processing I mean validated and added to the equation. Let me start wth some tests.
+Each key press must be processed. By processing I mean validated and added to the equation. Let me start with some 
+tests.
 ```javascript 1.8
 // src/services/Calculator.service.test.js
 
@@ -1923,6 +1924,8 @@ This is a really simple equation. There are much more complex ones, but before e
 want to get the reason I came for, seeing and calculating the result!
 
 ```javascript 1.8
+// src/services/Calculator.service.test.js
+
 import { equation, display, OPERATIONS } from './Calculator.service';
 
 const { SUM, EQUALS } = OPERATIONS;
@@ -1950,6 +1953,8 @@ creating a new "calculate" function like the "display" one, I decided to add the
 
 So, how would my calculator service look like?
 ```javascript 1.8
+// src/services/Calculator.service.js
+
 const COMMANDS = {
     DISPLAY: '__DiSPlAy__'
 };
@@ -1987,6 +1992,8 @@ parameter forcing starting the equation with an empty list.
 I can also make a more complex test, like calculating the sum of more than two numbers in the equation, among other 
 things. Let me also refactor my test to get it ready for evolution!
 ```javascript 1.8
+// src/services/Calculator.service.test.js
+
 import { equation, display, OPERATIONS } from './Calculator.service';
 
 const { SUM, EQUALS } = OPERATIONS;
@@ -2021,6 +2028,7 @@ Nice! Let me add other operators!
 
 #### Implementing all four operations
 ```javascript 1.8
+// src/services/Calculator.service.test.js
 .
 .
 .
@@ -2049,6 +2057,7 @@ describe('Calculator Service', () => {
 });
 ```
 ```javascript 1.8
+// src/services/Calculator.service.js
 .
 .
 .
@@ -2080,20 +2089,254 @@ Now I have a real calculator that can perform calculations, but... Only with inp
 allowing that successive numbers are concatenated as one, but before I do that, let me go back to my UI!
 
 #### Accumulating key presses
+My calculator machine, before adding and displaying results must show the equation. Since we haven't changes its 
+implementation yet and the previous logic using `eval` is still within the component, nothing is breaking. Let's try to
+use our new service for displaying the result
+```javascript 1.8
+// src/components/calculator-machine/CalculatorMachine.test.js
+
+describe('Calculator Machine', () => {
+    it('should display and equation', () => {
+        const calculator = mount(<CalculatorMachine />);
+        calculator.find('[data-qa="dk-key-1"]').simulate('click');
+        calculator.find('[data-qa="dk-key-+"]').simulate('click');
+        calculator.find('[data-qa="dk-key-1"]').simulate('click');
+
+        expect(calculator.find('[data-qa="result-display"]').text()).toBe('1 + 1');
+    });
+    .
+    .
+    .
+});
+```
+It fails! I'm still concatenating symbols without adding spaces between them, because I'm not using the new service 
+code. Let me use it. But... Wait! When setting the component state I should at least set an initial empty equation, like 
+the snippet below (pay attention on the "?" mark):
+```javascript 1.8
+// src/components/calculator-machine/CalculatorMachine.js
+.
+.
+.
+import { display, equation } from '../../services/Calculator.service';
+
+const CalculatorMachine = () => {
+    const [persistedEquation, setPersistedEquation] = useState(equation(?));
+    const handleEquation = keyValue => setPersistedEquation(persistedEquation(keyValue));
+    .
+    .
+    .
+    return (
+        <>
+            <span data-qa="result-display">{display(persistedEquation)}</span>
+            <Keyboard keys={keys} />
+        </>
+    );
+};
+.
+.
+.
+```
+That's a real requirement for my service! And it is not being fulfilled. So, I have two ways of doing it, 1) starting 
+the equation with a zero or accepting an empty argument. All calculator machine should always show a 0 when started, so 
+I'll go with solution number 1, initialize the equation with a zero. I'll just change the "?" for a zero (0) and...
+
+It breaks!
+
+I'm just concatenating values! There is a new requirement in place! _If the last symbol typed is just the number zero 
+and the current one is also a number, the new number must replace the older one_. And I'll make at least two tests to
+validate this rule.
+```javascript 1.8
+// src/services/Calculator.service.test.js
+    .
+    .
+    .
+    describe('Display', () => {
+        .
+        .
+        .
+        it('should replace the first number for the next one if its value is zero', () => {
+            const eq = equation(0)(1);
+            expect(display(eq)).toBe('1');
+        });
+
+        it('should replace the last number for the next one if its value is zero', () => {
+            const eq = equation(1)(SUM)(0)(2);
+            expect(display(eq)).toBe('1 + 2');
+        });
+    });
+    .
+    .
+    .
+```
+It is still concatenating. The fix is right away.
+```javascript 1.8
+// src/services/Calculator.service.js
+.
+.
+.
+const applyLastSymbolZeroRule = (equation, symbol) => {
+    const isEquationEmpty = equation.length === 0;
+    const isLastSymbolZero = !isEquationEmpty && equation[equation.length - 1] === 0;
+    const newEquation = [...equation];
+
+    if (isLastSymbolZero) {
+        newEquation.splice(equation.length - 1, 1, symbol);
+    } else {
+        newEquation.push(symbol);
+    }
+
+    return newEquation;
+};
+
+const appendToEquation = (symbol, equation = []) => {
+    const equationToAppend = symbol === OPERATIONS.EQUALS
+        ? [calculate(equation)]
+        : applyLastSymbolZeroRule(equation, symbol);
+
+    return symbol => symbol === COMMANDS.DISPLAY
+        ? equationToAppend.join(' ')
+        : appendToEquation(symbol, equationToAppend);
+};
+.
+.
+.
+```
+The main change was to apply the "last zero symbol must be replaced for the next one" rule instead of just appending a
+new one. Initially I thought it was going to work, but it happens that the first time the component is loaded it calls
+its main function twice and messing with my result. A really nasty error explodes in the terminal. A little Googling and
+Thanks to 
+[this thread from Stack Overflow](https://stackoverflow.com/questions/55621212/is-it-possible-to-react-usestate-in-react "is it possible to React.useState(() => {}) in React?")
+I learned that:
+> ... because state can be initialized and updated with a function that returns the initial state or the updated state, you 
+> need to supply a function that in turn returns the function ...
+
+Thank you [Emil Tholin]("https://github.com/EmilTholin")!
+
+That was a tricky one. Let me check how it looks like now.
+```javascript 1.8
+// src/components/calculator-machine/CalculatorMachine.js
+    .
+    .
+    .
+    const [persistedEquation, setPersistedEquation] = useState(() => equation(0));
+    const handleEquation = keyValue => setPersistedEquation(() => persistedEquation(keyValue));
+    .
+    .
+    .
+```
+Okay! The last test I've created works, but the one that should sum the values is failing! It is concatenating the 
+numbers instead of calculating them! Why? Because the keys are seding strings to the equation, not numbers! No big deal,
+just a quick fix in the Calculator service.
+```javascript 1.8
+.
+.
+.
+const calculate = equation => equation.reduce((result, current, index, equation) => {
+    .
+    .
+    .
+    switch (current) {
+    case SUM: return Number(result) + Number(equation[index + 1]);
+    case SUBTRACT: return Number(result) - Number(equation[index + 1]);
+    case MULTIPLY: return Number(result) * Number(equation[index + 1]);
+    case DIVIDE: return Number(result) / Number(equation[index + 1]);
+    }
+    .
+    .
+    .
+});
+.
+.
+.
+```
+Just to finish this part and go back to the UI, let's change existent tests to apply to all operations and numbers of 
+the calculator machine!
+```javascript 1.8
+.
+.
+.
+describe('Calculator Machine', () => {
+    describe('Display', () => {
+        it('should display and equation', () => {
+            const calculator = mount(<CalculatorMachine />);
+            calculator.find('[data-qa="dk-key-1"]').simulate('click');
+            calculator.find('[data-qa="dk-key-+"]').simulate('click');
+            calculator.find('[data-qa="dk-key-2"]').simulate('click');
+            calculator.find('[data-qa="dk-key--"]').simulate('click');
+            calculator.find('[data-qa="dk-key-3"]').simulate('click');
+            calculator.find('[data-qa="dk-key-x"]').simulate('click');
+            calculator.find('[data-qa="dk-key-4"]').simulate('click');
+            calculator.find('[data-qa="dk-key-÷"]').simulate('click');
+            calculator.find('[data-qa="dk-key-5"]').simulate('click');
+            calculator.find('[data-qa="dk-key-+"]').simulate('click');
+            calculator.find('[data-qa="dk-key-6"]').simulate('click');
+            calculator.find('[data-qa="dk-key--"]').simulate('click');
+            calculator.find('[data-qa="dk-key-7"]').simulate('click');
+            calculator.find('[data-qa="dk-key-x"]').simulate('click');
+            calculator.find('[data-qa="dk-key-8"]').simulate('click');
+            calculator.find('[data-qa="dk-key-÷"]').simulate('click');
+            calculator.find('[data-qa="dk-key-9"]').simulate('click');
+            calculator.find('[data-qa="dk-key--"]').simulate('click');
+            calculator.find('[data-qa="dk-key-0"]').simulate('click');
+
+            expect(calculator.find('[data-qa="result-display"]').text())
+                .toBe('1 + 2 - 3 x 4 ÷ 5 + 6 - 7 x 8 ÷ 9 - 0');
+        });
+    });
+
+    describe('Calculate', () => {
+        it('should calculate using all four operations', () => {
+            const calculator = mount(<CalculatorMachine />);
+            calculator.find('[data-qa="dk-key-1"]').simulate('click');
+            calculator.find('[data-qa="dk-key-+"]').simulate('click');
+            calculator.find('[data-qa="dk-key-2"]').simulate('click');
+            calculator.find('[data-qa="dk-key--"]').simulate('click');
+            calculator.find('[data-qa="dk-key-3"]').simulate('click');
+            calculator.find('[data-qa="dk-key-x"]').simulate('click');
+            calculator.find('[data-qa="dk-key-4"]').simulate('click');
+            calculator.find('[data-qa="dk-key-÷"]').simulate('click');
+            calculator.find('[data-qa="dk-key-5"]').simulate('click');
+            calculator.find('[data-qa="dk-key-+"]').simulate('click');
+            calculator.find('[data-qa="dk-key-6"]').simulate('click');
+            calculator.find('[data-qa="dk-key--"]').simulate('click');
+            calculator.find('[data-qa="dk-key-7"]').simulate('click');
+            calculator.find('[data-qa="dk-key-x"]').simulate('click');
+            calculator.find('[data-qa="dk-key-8"]').simulate('click');
+            calculator.find('[data-qa="dk-key-÷"]').simulate('click');
+            calculator.find('[data-qa="dk-key-9"]').simulate('click');
+            calculator.find('[data-qa="dk-key--"]').simulate('click');
+            calculator.find('[data-qa="dk-key-0"]').simulate('click');
+
+            expect(calculator.find('[data-qa="result-display"]').text()).toBe('1');
+        });
+    });
+});
+```
+
+Now, coming back to the real issue, 
 
 **To Be Continued**
 
-#### Going deeper
+#### Going deeper: validating input
+```
+    // Validate symbol:
+    //   1) Must be an integer from 0 to 9, a dot, an operation or a command
+    //   2) If the equation is empty, must be an integer from 0 to 9
+    //   3) If the last element is an operation can only accept an integer from 0 to 9
+    //   4) If the symbol is a dot, the last element must be an integer from 0 to 9
+    //   5) If the last element is any integer concatenated with a dot, the symbol must be an integer from 0 to 9
+    //   6) If the last element is only 0, the symbol cannot be another 0
 
-1. Receive a set of signals from a keyboard, concatenate this symbols if they are just numbers;
-2. If an operation signal is received (+, -, x, ÷, and %) a new number will be typed next. Typing a different operation
-one after the other, only the last one must be considered; 
-3. Apply some calculation if the signal is "equals to" (=);
-4. Reset it all if the signal is "Clear" (C);
-5. If the signal is simply a "dot" (.), concatenate to the current number being stored to turn it into a floating point 
-only if it wasn't turned into one already;
-6. Operations like multiplication and division have precedence from addition and subtraction;
+    // Operations:
+    //  1) If the symbol is a number and the last element is also a number, they must be concatenated and the last element must be replaced by the result of the concatenation
+    //  2) If the symbol is a dot and the last element is an integer, they must be concatenated and the last element must be replaced by the result of the concatenation
+    //  3) If the symbol is a number and the last element is any integer concatenated with a dot, they must be concatenated and the last element must be replaced by the result of the concatenation
+    //  4) If the symbol is a number and the last element is only a 0, the 0 must be replaced by the symbol
+    //  5) If the symbol is an operation, must be added as a new element
+    //  5) If the symbol is an EQUALS operation the equation must be calculated, cleared and the result added to it
+```
 
+**To Be Continued**
 
 #### Working on the keyboard grid layout
 **To Be Continued**
